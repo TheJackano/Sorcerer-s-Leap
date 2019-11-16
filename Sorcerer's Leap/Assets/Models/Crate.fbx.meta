@@ -3,21 +3,13 @@ guid: 6715adffe164c0c4483fe85466188cd1
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: Camera
-    100002: //RootNode
-    100004: Cube
-    100006: Light
-    400000: Camera
-    400002: //RootNode
-    400004: Cube
-    400006: Light
-    2000000: Camera
+    100000: //RootNode
+    400000: //RootNode
     2100000: Crate
     2100002: Wood
-    2300000: Cube
-    3300000: Cube
+    2300000: //RootNode
+    3300000: //RootNode
     4300000: Cube
-    10800000: Light
   externalObjects: {}
   materials:
     importMaterials: 1
