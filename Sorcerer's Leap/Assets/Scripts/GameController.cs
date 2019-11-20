@@ -6,6 +6,7 @@ public class GameController : MonoBehaviour
 {
     Enemy[] Enemies;
     string[] Element = {"Fire","Earth","Water","Metal","Wood"};
+    public GameObject[] objEnemies;
 
 
 
@@ -26,15 +27,20 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if(Input.inputString == "1") strPhase = "Selection";
+        if (Input.inputString == "s") strPhase = "Selection";
+        if (Input.inputString == "c") strPhase = "Combat";
+        //objEnemies[0].transform.GetChild(3).gameObject.SetActive(false);
 
         switch (strPhase)
         {
             case "Selection":
                 SelectedElement();
                 SelectedTargets();
+                ToggleSelectedTargetUI();
                 break;
             case "Combat":
+                //Debug.Log(strSelectedElement);
+                //Debug.Log(strSelectedTarget);
                 break;
             case "Shopping":
                 break;
@@ -69,7 +75,7 @@ public class GameController : MonoBehaviour
                 strSelectedElement = Element[4];
                 break;
         }
-        //Debug.Log(strSelectedElement);
+        Debug.Log(strSelectedElement);
     }
     private void SelectedTargets()
     {
@@ -88,7 +94,33 @@ public class GameController : MonoBehaviour
                 strSelectedTarget = "All";
                 break;
         }
-        //Debug.Log(strSelectedTarget);
+        Debug.Log(strSelectedTarget);
+    }
+    private void ToggleSelectedTargetUI()
+    {
+        switch (strSelectedTarget)
+        {
+            case "Left":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+                break;
+            case "Middle":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+                break;
+            case "Right":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
+                break;
+            case "All":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
+                break;
+        }
     }
 }
 public class Enemy
@@ -96,4 +128,5 @@ public class Enemy
     int Health;
     string WizzardType;
     string SelectedSpell;
+    string position;
 }
