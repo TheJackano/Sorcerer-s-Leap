@@ -15,27 +15,20 @@ public class GameController : MonoBehaviour
     public GameObject[] objEnemies;
     public GameObject Player;
     public Sprite[] imgElements;
+    public GameObject PlayerHealthBar;
 
     string strPhase = "";
     string strSelectedElement = "";
     string strSelectedTarget = "";
 
+    int PlayerHealth = 10;
+
     bool AIAssignedElement = false;
+    bool CombatComplete = false;
 
     void Start()
     {
-        {
-            objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-            objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-            objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
-        }//Deselects Enemy Targets Visually
-        {
-            Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
-            objEnemies[0].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
-            objEnemies[1].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
-            objEnemies[2].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
-        }//Sets all the UI Elements Selections to ? image
-        strPhase = "Selection";   
+        StartNewRound();
     }
 
     void Update()
@@ -49,7 +42,8 @@ public class GameController : MonoBehaviour
                 break;
             case "Combat":
                 if (!AIAssignedElement) RandomAIElement();
-                //CalculateDamage
+                if (!CombatComplete) CalculateCombat();
+                if (Input.GetKey(KeyCode.R)) StartNewRound();
                 break;
             case "Shopping":
                 break;
@@ -120,6 +114,108 @@ public class GameController : MonoBehaviour
                 break;
         }
     } //Allows the User to Select a Target
+    private void CalculateCombat()
+    {
+        if (strSelectedTarget == "All")
+        {
+            for (int i = 0; i < objEnemies.Length; i++)
+            {
+                string result = CompareTwoElements(strSelectedElement, Enemies[i].SelectedSpell);
+                Debug.Log("You have picked " + strSelectedElement + " and " + result + " against the " + Enemies[i].SelectedSpell + " Wizzard that picked " + Enemies[i].SelectedSpell);
+                if (result == "Win") Enemies[i].Health--;
+                else if (result == "Lose") PlayerHealth--;
+                Debug.Log("Your Health: " + PlayerHealth + " Enemy Aboves Health: " + Enemies[i].Health);
+            }
+        }
+        else if(strSelectedTarget == "Left")
+        {
+            string result = CompareTwoElements(strSelectedElement, Enemies[0].SelectedSpell);
+            if (result == "Win") Enemies[0].Health -= 3;
+            else if (result == "Lose") PlayerHealth -= 3;
+            Debug.Log("You "+ result + " this Fight. Your Health: " + PlayerHealth + ". Left Enemy's Health: " + Enemies[0].Health);
+        }
+        else if (strSelectedTarget == "Middle")
+        {
+            string result = CompareTwoElements(strSelectedElement, Enemies[1].SelectedSpell);
+            if (result == "Win") Enemies[1].Health -= 3;
+            else if (result == "Lose") PlayerHealth -= 3;
+            Debug.Log("You " + result + " this Fight. Your Health: " + PlayerHealth + ". Middle Enemy's Health: " + Enemies[1].Health);
+        }
+        else if (strSelectedTarget == "Right")
+        {
+            string result = CompareTwoElements(strSelectedElement, Enemies[2].SelectedSpell);
+            if (result == "Win") Enemies[2].Health -= 3;
+            else if (result == "Lose") PlayerHealth -= 3;
+            Debug.Log("You " + result + " this Fight. Your Health: " + PlayerHealth + ". Right Enemy's Health: " + Enemies[2].Health);
+        }
+        PlayerHealthBar.GetComponent<Image>().fillAmount = (float)PlayerHealth/10;
+        CombatComplete = true;
+    }
+    private void StartNewRound()
+    {
+        {
+            objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
+            objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
+            objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+        }//Deselects Enemy Targets Visually
+        {
+            Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
+            objEnemies[0].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
+            objEnemies[1].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
+            objEnemies[2].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
+        }//Sets all the UI Elements Selections to ? image
+        strSelectedElement = "";
+        strSelectedTarget = "";
+        for (int i = 0; i < objEnemies.Length; i++) Enemies[i].SelectedSpell = "";
+        AIAssignedElement = false;
+        CombatComplete = false;
+        strPhase = "Selection";
+    }
+    private string CompareTwoElements(string PlayerElement, string EnemyElement)
+    {
+        string result = "";
+        if (PlayerElement == "Fire")
+        {
+            if (EnemyElement == "Fire") result = "Draw";
+            if (EnemyElement == "Earth") result = "Draw";
+            if (EnemyElement == "Water") result = "Lose";
+            if (EnemyElement == "Metal") result = "Win";
+            if (EnemyElement == "Wood") result = "Draw";
+        }
+        else if (PlayerElement == "Earth")
+        {
+            if (EnemyElement == "Fire") result = "Draw";
+            if (EnemyElement == "Earth") result = "Draw";
+            if (EnemyElement == "Water") result = "Win";
+            if (EnemyElement == "Metal") result = "Draw";
+            if (EnemyElement == "Wood") result = "Lose";
+        }
+        else if (PlayerElement == "Water")
+        {
+            if (EnemyElement == "Fire") result = "Win";
+            if (EnemyElement == "Earth") result = "Lose";
+            if (EnemyElement == "Water") result = "Draw";
+            if (EnemyElement == "Metal") result = "Draw";
+            if (EnemyElement == "Wood") result = "Draw";
+        }
+        else if (PlayerElement == "Metal")
+        {
+            if (EnemyElement == "Fire") result = "Lose";
+            if (EnemyElement == "Earth") result = "Draw";
+            if (EnemyElement == "Water") result = "Draw";
+            if (EnemyElement == "Metal") result = "Draw";
+            if (EnemyElement == "Wood") result = "Win";
+        }
+        else if (PlayerElement == "Wood")
+        {
+            if (EnemyElement == "Fire") result = "Draw";
+            if (EnemyElement == "Earth") result = "Win";
+            if (EnemyElement == "Water") result = "Draw";
+            if (EnemyElement == "Metal") result = "Lose";
+            if (EnemyElement == "Wood") result= "Draw";
+        }
+        return result;
+    }
     private void RandomAIElement()
     {
         for(int i = 0; i < objEnemies.Length; i++)
@@ -144,21 +240,21 @@ public class GameController : MonoBehaviour
                     break;
                 case int n when n >= 50 && n <= 99://Affinity
                     Enemies[i].SelectedSpell = Enemies[i].WizzardType;
-                    Debug.Log(Enemies[i].WizzardType + "Special");
+                    //Debug.Log(Enemies[i].WizzardType + "Special");
                     break;
             }
             for(int k = 0; k < Element.Length; k++)
             {
                 if (Enemies[i].SelectedSpell == Element[k]) objEnemies[i].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[k];
             }
-            Debug.Log(Enemies[i].WizzardType + Enemies[i].SelectedSpell);
+            //Debug.Log(Enemies[i].WizzardType + Enemies[i].SelectedSpell);
         }
         AIAssignedElement = true; 
     } //Selectes a random element to each AI
 }
 public class Enemy
 {
-    public int Health = 100;
+    public int Health = 10;
     public string WizzardType;
     public string SelectedSpell;
 
