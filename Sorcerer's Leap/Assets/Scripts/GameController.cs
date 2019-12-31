@@ -27,12 +27,19 @@ public class GameController : MonoBehaviour
     bool CombatComplete = false;
 
     //Leap Motion Variables
+    //Right Hand
     bool isPointingOnlyWithIndexFinger;
     bool isPointingIndexFingerAtLeftEnemy;
     bool isPointingIndexFingerAtMiddleEnemy;
     bool isPointingIndexFingerAtRightEnemy;
     bool isRightHandOpen;
 
+    //Left Hand
+    bool isLeftHandClosed;
+    bool isLeftHandOpen;
+    bool isLeftHandPalmPointingDown;
+    bool isLeftHandPalmPointingRight;
+    bool isLeftHandPalmPointingUp;
 
     void Start()
     {
@@ -44,7 +51,8 @@ public class GameController : MonoBehaviour
         switch (strPhase)
         {
             case "Selection":
-                SelectedElement();
+                LeapMotionSelectedElement();
+                GUISelectedElement();
                 LeapMotionSelectedTarget();
                 GUISelectedTargets();
                 if (Input.GetKey(KeyCode.Space) && strSelectedElement != "" && strSelectedTarget !="") strPhase = "Combat";
@@ -58,32 +66,28 @@ public class GameController : MonoBehaviour
                 break;
         }
     }
-    private void SelectedElement()
+    private void LeapMotionSelectedElement()
     {
-        switch (Input.inputString)
+        if (isLeftHandOpen)
         {
-            case "q":
-                strSelectedElement = Element[0];
-                Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[0];
-                break;
-            case "w":
-                strSelectedElement = Element[1];
-                Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[1];
-                break;
-            case "e":
-                strSelectedElement = Element[2];
-                Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[2];
-                break;
-            case "r":
-                strSelectedElement = Element[3];
-                Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[3];
-                break;
-            case "t":
-                strSelectedElement = Element[4];
-                Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[4];
-                break;
+            if (isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && !isLeftHandPalmPointingUp) strSelectedElement = "Water";
+            if (!isLeftHandPalmPointingDown && isLeftHandPalmPointingRight && !isLeftHandPalmPointingUp) strSelectedElement = "Wood";
+            if (!isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && isLeftHandPalmPointingUp) strSelectedElement = "Fire";
         }
-    } //Allows the User to Select an Element
+        if (isLeftHandClosed)
+        {
+            if (isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && !isLeftHandPalmPointingUp) strSelectedElement = "Earth";
+            if (!isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && isLeftHandPalmPointingUp) strSelectedElement = "Metal";
+        }
+    }
+    private void GUISelectedElement()
+    {
+        if (strSelectedElement == "Fire") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[0];
+        if (strSelectedElement == "Earth") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[1];
+        if (strSelectedElement == "Water") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[2];
+        if (strSelectedElement == "Metal") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[3];
+        if (strSelectedElement == "Wood") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[4];
+    } //Updates the UI element infront of the enemy
     private void LeapMotionSelectedTarget()
     {
         if (isPointingOnlyWithIndexFinger)
@@ -260,55 +264,105 @@ public class GameController : MonoBehaviour
     public void PointingOnlyWithIndexFingerIsActive()
     { 
         isPointingOnlyWithIndexFinger = true;
-        Debug.Log("Pointing Index Finger");
+        //Debug.Log("Pointing Index Finger");
     }
     public void PointingOnlyWithIndexFingerIsDeactive()
     {
         isPointingOnlyWithIndexFinger = false;
-        Debug.Log("No Longer Pointing Index Finger");
+        //Debug.Log("No Longer Pointing Index Finger");
     }
     public void PointingIndexFingerTowardsLeftEnemyIsActive()
     {
         isPointingIndexFingerAtLeftEnemy = true;
-        Debug.Log("Index is pointing at the Left Enemy");
+        //Debug.Log("Index is pointing at the Left Enemy");
     }
     public void PointingIndexFingerTowardsLeftEnemyIsDeactive()
     {
         isPointingIndexFingerAtLeftEnemy = false;
-        Debug.Log("Index is no longer pointing at the Left Enemy");
+        //Debug.Log("Index is no longer pointing at the Left Enemy");
     }
     public void PointingIndexFingerTowardsMiddleEnemyIsActive()
     {
         isPointingIndexFingerAtMiddleEnemy = true;
-        Debug.Log("Index is pointing at the Middle Enemy");
+        //Debug.Log("Index is pointing at the Middle Enemy");
     }
     public void PointingIndexFingerTowardsMiddleEnemyIsDeactive()
     {
         isPointingIndexFingerAtMiddleEnemy = false;
-        Debug.Log("Index is no longer pointing at the Middle Enemy");
+        //Debug.Log("Index is no longer pointing at the Middle Enemy");
     }
     public void PointingIndexFingerTowardsRightEnemyIsActive()
     {
         isPointingIndexFingerAtRightEnemy = true;
-        Debug.Log("Index is pointing at the Right Enemy");
+        //Debug.Log("Index is pointing at the Right Enemy");
     }
     public void PointingIndexFingerTowardsRightEnemyIsDeactive()
     {
         isPointingIndexFingerAtRightEnemy = false;
-        Debug.Log("Index is no longer pointing at the Right Enemy");
+        //Debug.Log("Index is no longer pointing at the Right Enemy");
     }
     public void RightHandOpenIsActive()
     {
         isRightHandOpen = true;
-        Debug.Log("Right Hand Is Targeting All Enemies");
+        //Debug.Log("Right Hand Is Targeting All Enemies");
     }
     public void RightHandOpenIsDeactive()
     {
         isRightHandOpen = false;
-        Debug.Log("Right Hand Is No Longer Targeting All Enemies");
+        //Debug.Log("Right Hand Is No Longer Targeting All Enemies");
+    }
+    public void LeftHandClosedIsActive()
+    {
+        isLeftHandClosed = true;
+        //Debug.Log("Left Hand Is Closed");
+    }
+    public void LeftHandClosedIsDeactive()
+    {
+        isLeftHandClosed = false;
+        //Debug.Log("Left Hand Is No Longer Closed");
+    }
+    public void LeftHandOpenIsActive()
+    {
+        isLeftHandOpen = true;
+       // Debug.Log("Left Hand Is Open");
+    }
+    public void LeftHandOpenIsDeactive()
+    {
+        isLeftHandOpen = false;
+        //Debug.Log("Left Hand Is No Longer Open");
+    }
+    public void LeftHandPalmPointingDownIsActive()
+    {
+        isLeftHandPalmPointingDown = true;
+        Debug.Log("Palm is Pointing Down");
+    }
+    public void LeftHandPalmPointingDownIsDeactive()
+    {
+        isLeftHandPalmPointingDown = false;
+        Debug.Log("Palm is Not Pointing Down");
+    }
+    public void LeftHandPalmPointingRightIsActive()
+    {
+        isLeftHandPalmPointingRight = true;
+        Debug.Log("Palm is Pointing Right");
+    }
+    public void LeftHandPalmPointingRightIsDeactive()
+    {
+        isLeftHandPalmPointingRight = false;
+        Debug.Log("Palm is Not Pointing Right");
+    }
+    public void LeftHandPalmPointingUpIsActive()
+    {
+        isLeftHandPalmPointingUp = true;
+        Debug.Log("Palm is Pointing Up");
+    }
+    public void LeftHandPalmPointingUptIsDeactive()
+    {
+        isLeftHandPalmPointingUp = false;
+        Debug.Log("Palm is Not Pointing Up");
     }
 }
-public class Enemy
+    public class Enemy
 {
     public int Health = 10;
     public string WizzardType;
