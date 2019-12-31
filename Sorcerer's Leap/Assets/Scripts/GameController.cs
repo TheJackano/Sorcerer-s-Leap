@@ -26,6 +26,14 @@ public class GameController : MonoBehaviour
     bool AIAssignedElement = false;
     bool CombatComplete = false;
 
+    //Leap Motion Variables
+    bool isPointingOnlyWithIndexFinger;
+    bool isPointingIndexFingerAtLeftEnemy;
+    bool isPointingIndexFingerAtMiddleEnemy;
+    bool isPointingIndexFingerAtRightEnemy;
+    bool isRightHandOpen;
+
+
     void Start()
     {
         StartNewRound();
@@ -37,7 +45,8 @@ public class GameController : MonoBehaviour
         {
             case "Selection":
                 SelectedElement();
-                SelectedTargets();
+                LeapMotionSelectedTarget();
+                GUISelectedTargets();
                 if (Input.GetKey(KeyCode.Space) && strSelectedElement != "" && strSelectedTarget !="") strPhase = "Combat";
                 break;
             case "Combat":
@@ -75,42 +84,39 @@ public class GameController : MonoBehaviour
                 break;
         }
     } //Allows the User to Select an Element
-    private void SelectedTargets()
+    private void LeapMotionSelectedTarget()
     {
-        switch (Input.inputString)
+        if (isPointingOnlyWithIndexFinger)
         {
-            case "4":
-                strSelectedTarget = "Left";
-                {
-                    objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
-                    objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-                    objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
-                }//Displays Left Target Selection
-
+            if (isPointingIndexFingerAtLeftEnemy) strSelectedTarget = "Left";
+            if (isPointingIndexFingerAtMiddleEnemy) strSelectedTarget = "Middle";
+            if (isPointingIndexFingerAtRightEnemy) strSelectedTarget = "Right";
+        }
+        if (isRightHandOpen) strSelectedTarget = "All";
+    }
+    private void GUISelectedTargets()
+    {
+        switch (strSelectedTarget)
+        {
+            case "Left":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
                 break;
-            case "5":
-                strSelectedTarget = "Middle";
-                {
-                    objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-                    objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
-                    objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
-                }//Displays Middle Target Selection
+            case "Middle":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
                 break;
-            case "6":
-                strSelectedTarget = "Right";
-                {
-                    objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-                    objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-                    objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
-                }//Displays Right Target Selection
+            case "Right":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
                 break;
-            case "2":
-                strSelectedTarget = "All";
-                {
-                    objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
-                    objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
-                    objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
-                }//Displays All Target Selection
+            case "All":
+                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
                 break;
         }
     } //Allows the User to Select a Target
@@ -251,6 +257,56 @@ public class GameController : MonoBehaviour
         }
         AIAssignedElement = true; 
     } //Selectes a random element to each AI
+    public void PointingOnlyWithIndexFingerIsActive()
+    { 
+        isPointingOnlyWithIndexFinger = true;
+        Debug.Log("Pointing Index Finger");
+    }
+    public void PointingOnlyWithIndexFingerIsDeactive()
+    {
+        isPointingOnlyWithIndexFinger = false;
+        Debug.Log("No Longer Pointing Index Finger");
+    }
+    public void PointingIndexFingerTowardsLeftEnemyIsActive()
+    {
+        isPointingIndexFingerAtLeftEnemy = true;
+        Debug.Log("Index is pointing at the Left Enemy");
+    }
+    public void PointingIndexFingerTowardsLeftEnemyIsDeactive()
+    {
+        isPointingIndexFingerAtLeftEnemy = false;
+        Debug.Log("Index is no longer pointing at the Left Enemy");
+    }
+    public void PointingIndexFingerTowardsMiddleEnemyIsActive()
+    {
+        isPointingIndexFingerAtMiddleEnemy = true;
+        Debug.Log("Index is pointing at the Middle Enemy");
+    }
+    public void PointingIndexFingerTowardsMiddleEnemyIsDeactive()
+    {
+        isPointingIndexFingerAtMiddleEnemy = false;
+        Debug.Log("Index is no longer pointing at the Middle Enemy");
+    }
+    public void PointingIndexFingerTowardsRightEnemyIsActive()
+    {
+        isPointingIndexFingerAtRightEnemy = true;
+        Debug.Log("Index is pointing at the Right Enemy");
+    }
+    public void PointingIndexFingerTowardsRightEnemyIsDeactive()
+    {
+        isPointingIndexFingerAtRightEnemy = false;
+        Debug.Log("Index is no longer pointing at the Right Enemy");
+    }
+    public void RightHandOpenIsActive()
+    {
+        isRightHandOpen = true;
+        Debug.Log("Right Hand Is Targeting All Enemies");
+    }
+    public void RightHandOpenIsDeactive()
+    {
+        isRightHandOpen = false;
+        Debug.Log("Right Hand Is No Longer Targeting All Enemies");
+    }
 }
 public class Enemy
 {
