@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows.Speech;
 
 public class GameController : MonoBehaviour
 {
@@ -16,6 +19,11 @@ public class GameController : MonoBehaviour
     public GameObject Player;
     public Sprite[] imgElements;
     public GameObject PlayerHealthBar;
+
+	private KeywordRecognizer keywordRecognizer;
+	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+	public GameObject pause;
+
 
     string strPhase = "";
     string strSelectedElement = "";
@@ -44,6 +52,21 @@ public class GameController : MonoBehaviour
     void Start()
     {
         StartNewRound();
+
+		actions.Add("fire", Fire);
+		actions.Add("water", Water);
+		actions.Add("earth", Earth);
+		actions.Add("wood", Wood);
+		actions.Add("metal", Metal);
+		actions.Add("left", Left);
+		actions.Add("right", Right);
+		actions.Add("middle", Middle);
+		actions.Add("pause", Pause);
+		actions.Add("resume", Resume);
+
+		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
+		keywordRecognizer.OnPhraseRecognized += VoiceInput;
+		keywordRecognizer.Start();
     }
 
     void Update()
@@ -80,6 +103,51 @@ public class GameController : MonoBehaviour
             if (!isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && isLeftHandPalmPointingUp) strSelectedElement = "Metal";
         }
     }
+	private void VoiceInput(PhraseRecognizedEventArgs speech){
+		Debug.Log(speech.text);
+		actions[speech.text].Invoke();
+	}
+
+	private void Fire(){
+		strSelectedElement = "Fire";
+	}
+
+	private void Water(){
+		strSelectedElement = "Water";
+	}
+
+	private void Earth(){
+		strSelectedElement = "Earth";
+	}
+
+	private void Wood(){
+		strSelectedElement = "Wood";
+	}
+
+	private void Metal(){
+		strSelectedElement = "Metal";
+	}
+
+	private void Left(){
+		strSelectedTarget = "Left";
+	}
+
+	private void Right(){
+		strSelectedTarget = "Right";
+	}
+
+	private void Middle(){
+		strSelectedTarget = "Middle";
+	}
+
+	private void Pause(){
+		pause.SetActive(true);
+	}
+
+	private void Resume(){
+		pause.SetActive(false);
+	}
+
     private void GUISelectedElement()
     {
         if (strSelectedElement == "Fire") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[0];
@@ -230,7 +298,7 @@ public class GameController : MonoBehaviour
     {
         for(int i = 0; i < objEnemies.Length; i++)
         {
-            int RandomNumber = Random.Range(0,99);
+            int RandomNumber = UnityEngine.Random.Range(0,99);
             switch (RandomNumber)//"Fire","Earth","Water","Metal","Wood"
             {
                 case int n when n >=0 && n<=9://Fire
