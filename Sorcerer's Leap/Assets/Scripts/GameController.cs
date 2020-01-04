@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.Speech;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -23,7 +24,6 @@ public class GameController : MonoBehaviour
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
 	public GameObject pause;
-
 
     string strPhase = "";
     string strSelectedElement = "";
@@ -89,6 +89,7 @@ public class GameController : MonoBehaviour
                 break;
         }
     }
+
     private void LeapMotionSelectedElement()
     {
         if (isLeftHandOpen)
@@ -429,6 +430,7 @@ public class GameController : MonoBehaviour
         isLeftHandPalmPointingUp = false;
         Debug.Log("Palm is Not Pointing Up");
     }
+
 }
     public class Enemy
 {
