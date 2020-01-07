@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour
     public GameObject Player;
     public Sprite[] imgElements;
     public GameObject PlayerHealthBar;
+	public bool pauseActive;
 
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
@@ -63,6 +64,8 @@ public class GameController : MonoBehaviour
 		actions.Add("middle", Middle);
 		actions.Add("pause", Pause);
 		actions.Add("resume", Resume);
+		actions.Add("restart", Restart);
+		actions.Add("main menu", Main);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -143,10 +146,39 @@ public class GameController : MonoBehaviour
 
 	private void Pause(){
 		pause.SetActive(true);
+		pauseActive = true;
+		Time.timeScale = 0;
 	}
 
 	private void Resume(){
+		if(pauseActive == true){
 		pause.SetActive(false);
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	private void Restart(){
+		if(pauseActive == true){
+			SceneManager.LoadScene("TutorialCourtyard");
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	private void Main(){
+		if(pauseActive == true){
+			SceneManager.LoadScene("MainMenu");
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	void OnDestroy(){
+		if(keywordRecognizer != null){
+			keywordRecognizer.Stop();
+			keywordRecognizer.Dispose();
+		}
 	}
 
     private void GUISelectedElement()
