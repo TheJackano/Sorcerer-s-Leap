@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 93c2eb0f8605e2246a61f4d47cc0724f
+  - enabled: 1
+    path: Assets/Scenes/TutorialCourtyard.unity
+    guid: df724364777df214c86d39371418cab3
+  - enabled: 1
+    path: Assets/Scenes/MainArena.unity
+    guid: 8b675926df7361648978e620021ae4c2
   m_configObjects: {}
