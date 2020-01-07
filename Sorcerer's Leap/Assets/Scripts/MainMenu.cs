@@ -62,4 +62,11 @@ public class MainMenu : MonoBehaviour
         options.SetActive(false);
         menu.SetActive(true);
     }
+
+	void OnDestroy(){
+		if(keywordRecognizer != null){
+			keywordRecognizer.Stop();
+			keywordRecognizer.Dispose();
+		}
+	}
 }
