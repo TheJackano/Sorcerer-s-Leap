@@ -26,6 +26,7 @@ public class ArenaController : MonoBehaviour
 		actions.Add("Pause", Pause);
 		actions.Add("Resume", Resume);
 		actions.Add("Restart", Restart);
+		actions.Add("Main Menu", Main);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -85,6 +86,14 @@ public class ArenaController : MonoBehaviour
 		if(keywordRecognizer != null){
 			keywordRecognizer.Stop();
 			keywordRecognizer.Dispose();
+		}
+	}
+
+	public void Main(){
+		if(pauseActive == true){
+			pauseMenu.SetActive(false);
+			Time.timeScale = 1;
+			SceneManager.LoadScene("MainMenu");
 		}
 	}
 
