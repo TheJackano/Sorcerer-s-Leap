@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
     string strPhase = "";
     string strSelectedElement = "";
     string strSelectedTarget = "";
+    float selectionConfirmationTimer = 0;
 
     int PlayerHealth = 10;
 
@@ -71,7 +72,6 @@ public class GameController : MonoBehaviour
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
 		keywordRecognizer.Start();
     }
-
     void Update()
     {
         switch (strPhase)
@@ -81,6 +81,7 @@ public class GameController : MonoBehaviour
                 GUISelectedElement();
                 LeapMotionSelectedTarget();
                 GUISelectedTargets();
+                SelectionConfirmationTimer();
                 if (Input.GetKey(KeyCode.Space) && strSelectedElement != "" && strSelectedTarget !="") strPhase = "Combat";
                 break;
             case "Combat":
@@ -92,7 +93,11 @@ public class GameController : MonoBehaviour
                 break;
         }
     }
-
+    private void SelectionConfirmationTimer()
+    {
+        selectionConfirmationTimer -= Time.deltaTime;
+        //needs a variable to store old element and another for old slection
+    }
     private void LeapMotionSelectedElement()
     {
         if (isLeftHandOpen)
@@ -107,80 +112,6 @@ public class GameController : MonoBehaviour
             if (!isLeftHandPalmPointingDown && !isLeftHandPalmPointingRight && isLeftHandPalmPointingUp) strSelectedElement = "Metal";
         }
     }
-	private void VoiceInput(PhraseRecognizedEventArgs speech){
-		Debug.Log(speech.text);
-		actions[speech.text].Invoke();
-	}
-
-	private void Fire(){
-		strSelectedElement = "Fire";
-	}
-
-	private void Water(){
-		strSelectedElement = "Water";
-	}
-
-	private void Earth(){
-		strSelectedElement = "Earth";
-	}
-
-	private void Wood(){
-		strSelectedElement = "Wood";
-	}
-
-	private void Metal(){
-		strSelectedElement = "Metal";
-	}
-
-	private void Left(){
-		strSelectedTarget = "Left";
-	}
-
-	private void Right(){
-		strSelectedTarget = "Right";
-	}
-
-	private void Middle(){
-		strSelectedTarget = "Middle";
-	}
-
-	private void Pause(){
-		pause.SetActive(true);
-		pauseActive = true;
-		Time.timeScale = 0;
-	}
-
-	private void Resume(){
-		if(pauseActive == true){
-		pause.SetActive(false);
-			pauseActive = false;
-			Time.timeScale = 1;
-		}
-	}
-
-	private void Restart(){
-		if(pauseActive == true){
-			SceneManager.LoadScene("TutorialCourtyard");
-			pauseActive = false;
-			Time.timeScale = 1;
-		}
-	}
-
-	private void Main(){
-		if(pauseActive == true){
-			SceneManager.LoadScene("MainMenu");
-			pauseActive = false;
-			Time.timeScale = 1;
-		}
-	}
-
-	void OnDestroy(){
-		if(keywordRecognizer != null){
-			keywordRecognizer.Stop();
-			keywordRecognizer.Dispose();
-		}
-	}
-
     private void GUISelectedElement()
     {
         if (strSelectedElement == "Fire") Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[0];
@@ -204,24 +135,24 @@ public class GameController : MonoBehaviour
         switch (strSelectedTarget)
         {
             case "Left":
-                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
-                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[0].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
                 break;
             case "Middle":
-                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
-                objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+                objEnemies[0].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
                 break;
             case "Right":
-                objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-                objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[0].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+                objEnemies[1].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+                objEnemies[2].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
                 break;
             case "All":
-                objEnemies[0].transform.Find("Selection").gameObject.SetActive(true);
-                objEnemies[1].transform.Find("Selection").gameObject.SetActive(true);
-                objEnemies[2].transform.Find("Selection").gameObject.SetActive(true);
+                objEnemies[0].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
+                objEnemies[1].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
+                objEnemies[2].transform.Find("Canvas").Find("Target").gameObject.SetActive(true);
                 break;
         }
     } //Allows the User to Select a Target
@@ -265,9 +196,9 @@ public class GameController : MonoBehaviour
     private void StartNewRound()
     {
         {
-            objEnemies[0].transform.Find("Selection").gameObject.SetActive(false);
-            objEnemies[1].transform.Find("Selection").gameObject.SetActive(false);
-            objEnemies[2].transform.Find("Selection").gameObject.SetActive(false);
+            objEnemies[0].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+            objEnemies[1].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
+            objEnemies[2].transform.Find("Canvas").Find("Target").gameObject.SetActive(false);
         }//Deselects Enemy Targets Visually
         {
             Player.transform.Find("Element").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
@@ -435,34 +366,111 @@ public class GameController : MonoBehaviour
     public void LeftHandPalmPointingDownIsActive()
     {
         isLeftHandPalmPointingDown = true;
-        Debug.Log("Palm is Pointing Down");
+        //Debug.Log("Palm is Pointing Down");
     }
     public void LeftHandPalmPointingDownIsDeactive()
     {
         isLeftHandPalmPointingDown = false;
-        Debug.Log("Palm is Not Pointing Down");
+        //Debug.Log("Palm is Not Pointing Down");
     }
     public void LeftHandPalmPointingRightIsActive()
     {
         isLeftHandPalmPointingRight = true;
-        Debug.Log("Palm is Pointing Right");
+        //Debug.Log("Palm is Pointing Right");
     }
     public void LeftHandPalmPointingRightIsDeactive()
     {
         isLeftHandPalmPointingRight = false;
-        Debug.Log("Palm is Not Pointing Right");
+        //Debug.Log("Palm is Not Pointing Right");
     }
     public void LeftHandPalmPointingUpIsActive()
     {
         isLeftHandPalmPointingUp = true;
-        Debug.Log("Palm is Pointing Up");
+        //Debug.Log("Palm is Pointing Up");
     }
     public void LeftHandPalmPointingUptIsDeactive()
     {
         isLeftHandPalmPointingUp = false;
-        Debug.Log("Palm is Not Pointing Up");
+        //Debug.Log("Palm is Not Pointing Up");
     }
-
+    private void VoiceInput(PhraseRecognizedEventArgs speech)
+    {
+        Debug.Log(speech.text);
+        actions[speech.text].Invoke();
+    }
+    private void Fire()
+    {
+        strSelectedElement = "Fire";
+    }
+    private void Water()
+    {
+        strSelectedElement = "Water";
+    }
+    private void Earth()
+    {
+        strSelectedElement = "Earth";
+    }
+    private void Wood()
+    {
+        strSelectedElement = "Wood";
+    }
+    private void Metal()
+    {
+        strSelectedElement = "Metal";
+    }
+    private void Left()
+    {
+        strSelectedTarget = "Left";
+    }
+    private void Right()
+    {
+        strSelectedTarget = "Right";
+    }
+    private void Middle()
+    {
+        strSelectedTarget = "Middle";
+    }
+    private void Pause()
+    {
+        pause.SetActive(true);
+        pauseActive = true;
+        Time.timeScale = 0;
+    }
+    private void Resume()
+    {
+        if (pauseActive == true)
+        {
+            pause.SetActive(false);
+            pauseActive = false;
+            Time.timeScale = 1;
+        }
+    }
+    private void Restart()
+    {
+        if (pauseActive == true)
+        {
+            SceneManager.LoadScene("TutorialCourtyard");
+            pauseActive = false;
+            Time.timeScale = 1;
+        }
+    }
+    private void Main()
+    {
+        if (pauseActive == true)
+        {
+            SceneManager.LoadScene("MainMenu");
+            pauseActive = false;
+            Time.timeScale = 1;
+        }
+    }
+    void OnDestroy()
+    {
+        if (keywordRecognizer != null)
+        {
+            keywordRecognizer.Stop();
+            keywordRecognizer.Dispose();
+        }
+    }
 }
     public class Enemy
 {
