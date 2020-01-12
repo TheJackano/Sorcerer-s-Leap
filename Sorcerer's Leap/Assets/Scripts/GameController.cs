@@ -19,22 +19,33 @@ public class GameController : MonoBehaviour
     public GameObject[] objEnemies;
     public GameObject Player;
     public Sprite[] imgElements;
-    public GameObject PlayerHealthBar;
-	public bool pauseActive;
+    public Image PlayerHealthBar;
+    public bool pauseActive;
 
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
 	public GameObject pause;
 
+    public Image ElementTargetConfirmation;
+
     string strPhase = "";
     string strSelectedElement = "";
     string strSelectedTarget = "";
-    float selectionConfirmationTimer = 0;
 
-    int PlayerHealth = 10;
+    string strOldElement = "";
+    string strOldTarget = "";
+    float selectionConfirmationTimerLength = 3f;
+    float selectionConfirmationTimer = 3f;
+
+    float PlayerHealth = 100f;
 
     bool AIAssignedElement = false;
     bool CombatComplete = false;
+
+    float AttackDamage = 10f;
+    float CritChance = 0f;
+    float CritDamage = 1.5f;
+    float Defence = 0f;
 
     //Leap Motion Variables
     //Right Hand
@@ -82,7 +93,7 @@ public class GameController : MonoBehaviour
                 LeapMotionSelectedTarget();
                 GUISelectedTargets();
                 SelectionConfirmationTimer();
-                if (Input.GetKey(KeyCode.Space) && strSelectedElement != "" && strSelectedTarget !="") strPhase = "Combat";
+                //if (Input.GetKey(KeyCode.Space) && strSelectedElement != "" && strSelectedTarget !="") strPhase = "Combat";
                 break;
             case "Combat":
                 if (!AIAssignedElement) RandomAIElement();
@@ -94,9 +105,13 @@ public class GameController : MonoBehaviour
         }
     }
     private void SelectionConfirmationTimer()
-    {
-        selectionConfirmationTimer -= Time.deltaTime;
-        //needs a variable to store old element and another for old slection
+    {   
+        if(strSelectedElement == strOldElement && strSelectedTarget == strOldTarget && strSelectedElement != "" && strSelectedTarget != "") selectionConfirmationTimer -= Time.deltaTime;
+        else selectionConfirmationTimer = selectionConfirmationTimerLength;
+        strOldElement = strSelectedElement;
+        strOldTarget = strSelectedTarget;
+        ElementTargetConfirmation.fillAmount = 1 - (selectionConfirmationTimer / selectionConfirmationTimerLength);
+        if (selectionConfirmationTimer <= 0) strPhase = "Combat";
     }
     private void LeapMotionSelectedElement()
     {
@@ -158,39 +173,94 @@ public class GameController : MonoBehaviour
     } //Allows the User to Select a Target
     private void CalculateCombat()
     {
+        float CalculatedDamage;
         if (strSelectedTarget == "All")
         {
             for (int i = 0; i < objEnemies.Length; i++)
             {
+                bool CritBool = HasCritBool();
                 string result = CompareTwoElements(strSelectedElement, Enemies[i].SelectedSpell);
-                Debug.Log("You have picked " + strSelectedElement + " and " + result + " against the " + Enemies[i].SelectedSpell + " Wizzard that picked " + Enemies[i].SelectedSpell);
-                if (result == "Win") Enemies[i].Health--;
-                else if (result == "Lose") PlayerHealth--;
-                Debug.Log("Your Health: " + PlayerHealth + " Enemy Aboves Health: " + Enemies[i].Health);
+                if (result == "Win")
+                {
+                    if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[i].Defence;
+                    else CalculatedDamage = AttackDamage - Enemies[i].Defence;
+                    if (CalculatedDamage < 0) CalculatedDamage = 0;
+                    Enemies[i].Health -= CalculatedDamage/3;
+                }
+
+                else if (result == "Lose")
+                {
+                    CalculatedDamage = Enemies[i].AttackDamage - Defence;
+                    if (CalculatedDamage < 0) CalculatedDamage = 0;
+                    PlayerHealth -= CalculatedDamage/3;
+                }
             }
         }
         else if(strSelectedTarget == "Left")
         {
+            bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[0].SelectedSpell);
-            if (result == "Win") Enemies[0].Health -= 3;
-            else if (result == "Lose") PlayerHealth -= 3;
-            Debug.Log("You "+ result + " this Fight. Your Health: " + PlayerHealth + ". Left Enemy's Health: " + Enemies[0].Health);
+            if (result == "Win")
+            {
+                if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[0].Defence;
+                else CalculatedDamage = AttackDamage - Enemies[0].Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                Enemies[0].Health -= CalculatedDamage;
+            }
+            else if (result == "Lose")
+            {
+                CalculatedDamage = Enemies[0].AttackDamage - Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                PlayerHealth -= CalculatedDamage;
+            }
         }
         else if (strSelectedTarget == "Middle")
         {
+            bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[1].SelectedSpell);
-            if (result == "Win") Enemies[1].Health -= 3;
-            else if (result == "Lose") PlayerHealth -= 3;
-            Debug.Log("You " + result + " this Fight. Your Health: " + PlayerHealth + ". Middle Enemy's Health: " + Enemies[1].Health);
+            if (result == "Win")
+            {
+                if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[1].Defence;
+                else CalculatedDamage = AttackDamage - Enemies[1].Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                Enemies[1].Health -= CalculatedDamage;
+            }
+
+            else if (result == "Lose")
+            {
+                CalculatedDamage = Enemies[1].AttackDamage - Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                PlayerHealth -= CalculatedDamage;
+            }
         }
         else if (strSelectedTarget == "Right")
         {
+            bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[2].SelectedSpell);
-            if (result == "Win") Enemies[2].Health -= 3;
-            else if (result == "Lose") PlayerHealth -= 3;
-            Debug.Log("You " + result + " this Fight. Your Health: " + PlayerHealth + ". Right Enemy's Health: " + Enemies[2].Health);
+            if (result == "Win")
+            {
+                if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[2].Defence;
+                else CalculatedDamage = AttackDamage - Enemies[2].Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                Enemies[2].Health -= CalculatedDamage;
+            }
+
+            else if (result == "Lose")
+            {
+                CalculatedDamage = Enemies[2].AttackDamage - Defence;
+                if (CalculatedDamage < 0) CalculatedDamage = 0;
+                PlayerHealth -= CalculatedDamage;
+            }
         }
-        PlayerHealthBar.GetComponent<Image>().fillAmount = (float)PlayerHealth/10;
+        PlayerHealthBar.GetComponent<Image>().fillAmount = PlayerHealth/100;
+        for (int i = 0; i < objEnemies.Length; i++)
+        {
+            objEnemies[i].transform.Find("Canvas").Find("HealthFill").gameObject.GetComponent<Image>().fillAmount = Enemies[i].Health / 100;
+            if (Enemies[i].Health <= 0) Enemies[i].Alive = false;
+        }
+
+
+
         CombatComplete = true;
     }
     private void StartNewRound()
@@ -257,6 +327,12 @@ public class GameController : MonoBehaviour
             if (EnemyElement == "Wood") result= "Draw";
         }
         return result;
+    }
+    private bool HasCritBool()
+    {
+        int RandomNumber = UnityEngine.Random.Range(0, 99);
+        if (RandomNumber <= CritChance-1) return true;
+        else return false;
     }
     private void RandomAIElement()
     {
@@ -474,9 +550,12 @@ public class GameController : MonoBehaviour
 }
     public class Enemy
 {
-    public int Health = 10;
+    public float Health = 100f;
+    public bool Alive = true;
     public string WizzardType;
     public string SelectedSpell;
+    public float AttackDamage = 10f;
+    public float Defence = 0f;
 
     public Enemy(string _WizzardType)
     {
