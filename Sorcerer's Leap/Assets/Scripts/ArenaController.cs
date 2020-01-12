@@ -15,6 +15,18 @@ public class ArenaController : MonoBehaviour
 	public GameObject pauseMenu;
 	public bool pauseActive;
 	public bool buying;
+	public bool health;
+	public bool attack;
+	public bool criticalChance;
+	public bool defence;
+	public bool pendant;
+
+	public float PlayerHealth = 100f;
+	public float AttackDamage = 10f;
+	public float CritChance = 0f;
+	public float CritDamage = 1.5f;
+	public float DefenceStat = 0f;
+	public float moneyMultiplyer = 1f;
 
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
@@ -29,6 +41,11 @@ public class ArenaController : MonoBehaviour
 		actions.Add("Restart", Restart);
 		actions.Add("Main Menu", Main);
 		actions.Add("Buy", Buy);
+		actions.Add("Health", Health);
+		actions.Add("Attack", Attack);
+		actions.Add("Defence", Defence);
+		actions.Add("Crit Chance", Crit);
+		actions.Add("Pendant", Pendant);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -56,8 +73,33 @@ public class ArenaController : MonoBehaviour
 		
 	public void Checkout(){
 		if(shopOpen == true){
-		camAnimation.Play("BackToFight");
+			if(buying == true){
+				if(health == true){
+					PlayerHealth = 100f;
+				}
+				if(defence == true){
+					DefenceStat = DefenceStat + 1;
+				}
+				if(criticalChance == true){
+					CritChance = CritChance + 1;
+				}
+				if(attack == true){
+					AttackDamage = AttackDamage + 1;
+				}
+
+				if(pendant == true){
+					moneyMultiplyer = moneyMultiplyer + 1;
+				}
+					
 			shopOpen = false;
+			buying = false;
+			health = false;
+			defence = false;
+			criticalChance = false;
+			pendant = false;
+			attack = false;
+			}
+			camAnimation.Play("BackToFight");
 		}
 	}
 
@@ -102,6 +144,36 @@ public class ArenaController : MonoBehaviour
 	public void Buy(){
 		if(shopOpen == true){
 			buying = true;
+		}
+	}
+
+	public void Health(){
+		if(buying == true){
+			health = true;
+		}
+	}
+
+	public void Defence(){
+		if(buying == true){
+			defence = true;
+		}
+	}
+
+	public void Attack(){
+		if(buying == true){
+			attack = true;
+		}
+	}
+
+	public void Crit(){
+		if(buying == true){
+			criticalChance = true;
+		}
+	}
+
+	public void Pendant(){
+		if(buying == true){
+			pendant = true;
 		}
 	}
 
