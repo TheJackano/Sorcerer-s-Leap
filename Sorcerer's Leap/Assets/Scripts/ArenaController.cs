@@ -14,6 +14,7 @@ public class ArenaController : MonoBehaviour
 	public bool shopOpen;
 	public GameObject pauseMenu;
 	public bool pauseActive;
+	public bool buying;
 
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
@@ -27,6 +28,7 @@ public class ArenaController : MonoBehaviour
 		actions.Add("Resume", Resume);
 		actions.Add("Restart", Restart);
 		actions.Add("Main Menu", Main);
+		actions.Add("Buy", Buy);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -94,6 +96,12 @@ public class ArenaController : MonoBehaviour
 			pauseMenu.SetActive(false);
 			Time.timeScale = 1;
 			SceneManager.LoadScene("MainMenu");
+		}
+	}
+
+	public void Buy(){
+		if(shopOpen == true){
+			buying = true;
 		}
 	}
 
