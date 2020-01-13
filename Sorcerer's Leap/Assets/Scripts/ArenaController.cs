@@ -77,7 +77,7 @@ public class ArenaController : MonoBehaviour
     public GameObject pendantSelect;
 
     public float DefenceStat = 0f;
-    public float moneyMultiplyer = 1f;
+    public int moneyMultiplyer = 1;
 
     public int gold = 0;
     public Text goldCount;
@@ -187,23 +187,28 @@ public class ArenaController : MonoBehaviour
                 if (health == true)
                 {
                     PlayerHealth = 100f;
+					gold = gold - 100;
                 }
                 if (defence == true)
                 {
                     DefenceStat = DefenceStat + 1;
+					gold = gold - 200;
                 }
                 if (criticalChance == true)
                 {
                     CritChance = CritChance + 1;
+					gold = gold - 200;
                 }
                 if (attack == true)
                 {
                     AttackDamage = AttackDamage + 1;
+					gold = gold - 200;
                 }
 
                 if (pendant == true)
                 {
                     moneyMultiplyer = moneyMultiplyer + 1;
+					gold = gold - 100;
                 }
 
                 shopOpen = false;
@@ -293,8 +298,10 @@ public class ArenaController : MonoBehaviour
     {
         if (buying == true)
         {
+			if(gold >= 100){
             health = true;
             healthSelect.SetActive(true);
+			}
         }
         if (removing == true)
         {
@@ -307,8 +314,10 @@ public class ArenaController : MonoBehaviour
     {
         if (buying == true)
         {
+			if(gold >= 200){
             defence = true;
             defenceSelect.SetActive(true);
+			}
         }
         if (removing == true)
         {
@@ -321,8 +330,10 @@ public class ArenaController : MonoBehaviour
     {
         if (buying == true)
         {
+			if(gold >= 200){
             attack = true;
             attackSelect.SetActive(true);
+			}
         }
         if (removing == true)
         {
@@ -335,8 +346,10 @@ public class ArenaController : MonoBehaviour
     {
         if (buying == true)
         {
+			if(gold >= 200){
             criticalChance = true;
             criticalSelect.SetActive(true);
+			}
         }
         if (removing == true)
         {
@@ -349,8 +362,10 @@ public class ArenaController : MonoBehaviour
     {
         if (buying == true)
         {
+			if(gold >= 100){
             pendant = true;
             pendantSelect.SetActive(true);
+			}
         }
         if (removing == true)
         {
@@ -540,7 +555,7 @@ public class ArenaController : MonoBehaviour
         CombatComplete = false;
 		roundEnd = false;
 		between.SetActive(false);
-		gold = gold + 50;
+		gold = gold * moneyMultiplyer + 50;
         strPhase = "Selection";
     }
     private string CompareTwoElements(string PlayerElement, string EnemyElement)
