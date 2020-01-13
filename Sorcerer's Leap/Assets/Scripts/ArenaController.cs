@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ArenaController : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class ArenaController : MonoBehaviour
 	public bool criticalChance;
 	public bool defence;
 	public bool pendant;
+	public bool removing;
 
 	public float PlayerHealth = 100f;
 	public float AttackDamage = 10f;
@@ -27,6 +29,9 @@ public class ArenaController : MonoBehaviour
 	public float CritDamage = 1.5f;
 	public float DefenceStat = 0f;
 	public float moneyMultiplyer = 1f;
+
+	public int gold = 0;
+	public Text goldCount;
 
 	private KeywordRecognizer keywordRecognizer;
 	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
@@ -46,6 +51,7 @@ public class ArenaController : MonoBehaviour
 		actions.Add("Defence", Defence);
 		actions.Add("Crit Chance", Crit);
 		actions.Add("Pendant", Pendant);
+		actions.Add("Remove", Remove);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -98,6 +104,7 @@ public class ArenaController : MonoBehaviour
 			criticalChance = false;
 			pendant = false;
 			attack = false;
+				removing = false;
 			}
 			camAnimation.Play("BackToFight");
 		}
@@ -144,6 +151,14 @@ public class ArenaController : MonoBehaviour
 	public void Buy(){
 		if(shopOpen == true){
 			buying = true;
+			removing = false;
+		}
+	}
+
+	public void Remove(){
+		if(shopOpen == true){
+			removing = true;
+			buying = false;
 		}
 	}
 
@@ -151,11 +166,17 @@ public class ArenaController : MonoBehaviour
 		if(buying == true){
 			health = true;
 		}
+		if(removing == true){
+			
+		}
 	}
 
 	public void Defence(){
 		if(buying == true){
 			defence = true;
+		}
+		if(removing == true){
+			defence = false;
 		}
 	}
 
@@ -163,17 +184,26 @@ public class ArenaController : MonoBehaviour
 		if(buying == true){
 			attack = true;
 		}
+		if(removing == true){
+			attack = false;
+		}
 	}
 
 	public void Crit(){
 		if(buying == true){
 			criticalChance = true;
 		}
+		if(removing == true){
+			criticalChance = false;
+		}
 	}
 
 	public void Pendant(){
 		if(buying == true){
 			pendant = true;
+		}
+		if(removing == true){
+			pendant = false;
 		}
 	}
 
