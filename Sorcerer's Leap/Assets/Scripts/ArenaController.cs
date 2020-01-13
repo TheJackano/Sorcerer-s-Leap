@@ -25,9 +25,9 @@ public class ArenaController : MonoBehaviour
 
     Enemy[] Enemies = new Enemy[]
        {
+            new Enemy("Metal"),
             new Enemy("Water"),
             new Enemy("Fire"),
-            new Enemy("Metal"),
        };
     string[] Element = { "Fire", "Earth", "Water", "Metal", "Wood" };
     public GameObject[] objEnemies;
@@ -106,6 +106,15 @@ public class ArenaController : MonoBehaviour
         actions.Add("Crit Chance", Crit);
         actions.Add("Pendant", Pendant);
         actions.Add("Remove", Remove);
+		actions.Add("fire", Fire);
+		actions.Add("water", Water);
+		actions.Add("earth", Earth);
+		actions.Add("wood", Wood);
+		actions.Add("metal", Metal);
+		actions.Add("left", Left);
+		actions.Add("right", Right);
+		actions.Add("middle", Middle);
+		actions.Add("Next", StartNewRound);
 
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -486,6 +495,7 @@ public class ArenaController : MonoBehaviour
             string result = CompareTwoElements(strSelectedElement, Enemies[2].SelectedSpell);
             if (result == "Win")
             {
+				gold += 50;
                 if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[2].Defence;
                 else CalculatedDamage = AttackDamage - Enemies[2].Defence;
                 if (CalculatedDamage < 0) CalculatedDamage = 0;
@@ -528,6 +538,8 @@ public class ArenaController : MonoBehaviour
         for (int i = 0; i < objEnemies.Length; i++) Enemies[i].SelectedSpell = "";
         AIAssignedElement = false;
         CombatComplete = false;
+		roundEnd = false;
+		between.SetActive(false);
         strPhase = "Selection";
     }
     private string CompareTwoElements(string PlayerElement, string EnemyElement)
