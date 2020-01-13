@@ -23,6 +23,12 @@ public class ArenaController : MonoBehaviour
 	public bool pendant;
 	public bool removing;
 
+	public GameObject healthSelect;
+	public GameObject attackSelect;
+	public GameObject criticalSelect;
+	public GameObject defenceSelect;
+	public GameObject pendantSelect;
+
 	public float PlayerHealth = 100f;
 	public float AttackDamage = 10f;
 	public float CritChance = 0f;
@@ -105,6 +111,11 @@ public class ArenaController : MonoBehaviour
 			pendant = false;
 			attack = false;
 				removing = false;
+				healthSelect.SetActive(false);
+				attackSelect.SetActive(false);
+				criticalSelect.SetActive(false);
+				defenceSelect.SetActive(false);
+				pendantSelect.SetActive(false);
 			}
 			camAnimation.Play("BackToFight");
 		}
@@ -165,45 +176,55 @@ public class ArenaController : MonoBehaviour
 	public void Health(){
 		if(buying == true){
 			health = true;
+			healthSelect.SetActive(true);
 		}
 		if(removing == true){
-			
+			health = false;
+			healthSelect.SetActive(false);
 		}
 	}
 
 	public void Defence(){
 		if(buying == true){
 			defence = true;
+			defenceSelect.SetActive(true);
 		}
 		if(removing == true){
 			defence = false;
+			defenceSelect.SetActive(false);
 		}
 	}
 
 	public void Attack(){
 		if(buying == true){
 			attack = true;
+			attackSelect.SetActive(true);
 		}
 		if(removing == true){
 			attack = false;
+			attackSelect.SetActive(false);
 		}
 	}
 
 	public void Crit(){
 		if(buying == true){
 			criticalChance = true;
+			criticalSelect.SetActive(true);
 		}
 		if(removing == true){
 			criticalChance = false;
+			criticalSelect.SetActive(false);
 		}
 	}
 
 	public void Pendant(){
 		if(buying == true){
 			pendant = true;
+			pendantSelect.SetActive(true);
 		}
 		if(removing == true){
 			pendant = false;
+			pendantSelect.SetActive(false);
 		}
 	}
 
