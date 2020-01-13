@@ -69,7 +69,7 @@ public class ArenaController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+		goldCount.text = "" + gold;
     }
 
 	private void VoiceInput(PhraseRecognizedEventArgs speech){
