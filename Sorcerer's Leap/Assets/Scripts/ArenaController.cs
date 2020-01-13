@@ -495,7 +495,7 @@ public class ArenaController : MonoBehaviour
             string result = CompareTwoElements(strSelectedElement, Enemies[2].SelectedSpell);
             if (result == "Win")
             {
-				gold += 50;
+				
                 if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[2].Defence;
                 else CalculatedDamage = AttackDamage - Enemies[2].Defence;
                 if (CalculatedDamage < 0) CalculatedDamage = 0;
@@ -540,6 +540,7 @@ public class ArenaController : MonoBehaviour
         CombatComplete = false;
 		roundEnd = false;
 		between.SetActive(false);
+		gold = gold + 50;
         strPhase = "Selection";
     }
     private string CompareTwoElements(string PlayerElement, string EnemyElement)
