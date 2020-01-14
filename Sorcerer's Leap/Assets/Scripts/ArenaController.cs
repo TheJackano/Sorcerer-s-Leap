@@ -98,27 +98,69 @@ public class ArenaController : MonoBehaviour
         StartNewRound();
 
         actions.Add("Shop", Shop);
+		actions.Add("Go to Shop", Shop);
         actions.Add("Checkout", Checkout);
+		actions.Add("Leave the Shop", Checkout);
         actions.Add("Pause", Pause);
+		actions.Add("Pause the Game", Pause);
+		actions.Add("Stop the game", Pause);
+		actions.Add("I'm not having fun", Pause);
+		actions.Add("I'm tired", Pause);
+		actions.Add("Hold on", Pause);
         actions.Add("Resume", Resume);
+		actions.Add("Resume the game", Resume);
+		actions.Add("Back to game", Resume);
         actions.Add("Restart", Restart);
+		actions.Add("Restart the Level", Restart);
+		actions.Add("Start over", Restart);
         actions.Add("Main Menu", Main);
         actions.Add("Buy", Buy);
+		actions.Add("I want to buy", Buy);
+		actions.Add("I want", Buy);
         actions.Add("Health", Health);
+		actions.Add("The red potion", Health);
         actions.Add("Attack", Attack);
+		actions.Add("The sword", Attack);
         actions.Add("Defence", Defence);
+		actions.Add("The shield", Defence);
         actions.Add("Crit Chance", Crit);
+		actions.Add("The blue potion", Crit);
         actions.Add("Pendant", Pendant);
+		actions.Add("The pendant", Pendant);
         actions.Add("Remove", Remove);
+		actions.Add("Take off", Remove);
+		actions.Add("I don't want", Remove);
 		actions.Add("fire", Fire);
+		actions.Add("I choose fire", Fire);
+		actions.Add("Cast fire", Fire);
 		actions.Add("water", Water);
+		actions.Add("Cast water", Water);
+		actions.Add("I choose water", Water);
 		actions.Add("earth", Earth);
+		actions.Add("Cast earth", Earth);
+		actions.Add("I choose earth", Earth);
 		actions.Add("wood", Wood);
+		actions.Add("Cast wood", Wood);
+		actions.Add("I choose wood", Wood);
 		actions.Add("metal", Metal);
+		actions.Add("Cast metal", Metal);
+		actions.Add("I choose metal", Metal);
 		actions.Add("left", Left);
+		actions.Add("On the left guy", Left);
+		actions.Add("Attack the guy on the left", Left);
 		actions.Add("right", Right);
+		actions.Add("On the right guy", Right);
+		actions.Add("Attack the guy on the right", Right);
 		actions.Add("middle", Middle);
+		actions.Add("On the middle guy", Middle);
+		actions.Add("Attack the guy in middle", Middle);
+		actions.Add("Attack everyone", All);
+		actions.Add("On all of them", All);
+		actions.Add("All", All);
+		actions.Add("Do an area attack", All);
+		actions.Add("Area attack", All);
 		actions.Add("Next", StartNewRound);
+		actions.Add("Start the next round", StartNewRound);
 
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -378,6 +420,10 @@ public class ArenaController : MonoBehaviour
             pendantSelect.SetActive(false);
         }
     }
+
+	public void All(){
+		strSelectedTarget = "All";
+	}
     private void LeapMotionPointingAtObject()
     {
         if (isPointingOnlyWithIndexFinger && roundEnd == true)
