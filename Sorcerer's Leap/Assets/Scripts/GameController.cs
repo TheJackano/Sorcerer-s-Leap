@@ -98,7 +98,7 @@ public class GameController : MonoBehaviour
 		actions.Add("Back to game", Resume);
 		actions.Add("Restart the Level", Restart);
 		actions.Add("Start over", Restart);
-		actions.Add("Next", Next);
+		actions.Add("I understand", Next);
 		actions.Add("Okay", Next);
 		actions.Add("Next one", Next);
 		actions.Add("Help", Help);
@@ -126,14 +126,16 @@ public class GameController : MonoBehaviour
 		actions.Add("Area attack", All);
 		actions.Add("Everyone", All);
 		actions.Add("Target everyone", All);
-		actions.Add("Next round", StartNewRound);
 		actions.Add("Next", StartNewRound);
+		actions.Add("Next round", StartNewRound);
 		actions.Add("What now", StartNewRound);
+		actions.Add("Move on", StartNewRound);
 		actions.Add("Retry", Restart);
 		actions.Add("Try again", Restart);
 		actions.Add("Play", Arena);
 		actions.Add("Play game", Arena);
 		actions.Add("Go to Arena", Arena);
+		actions.Add("Quit", MainTwo);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -637,6 +639,15 @@ public class GameController : MonoBehaviour
 	public void Arena(){
 		if(tutorialComplete == true){
 		SceneManager.LoadScene("MainArena");
+		}
+	}
+
+	private void MainTwo()
+	{
+		if (tutorialComplete == true)
+		{
+			SceneManager.LoadScene("MainMenu");
+			pauseActive = false;
 		}
 	}
 }

@@ -48,7 +48,7 @@ public class ArenaController : MonoBehaviour
     float shopConfirmationTimerLength = 3f;
     float shopConfirmationTimer = 3f;
 
-    float PlayerHealth = 100f;
+    public float PlayerHealth = 100f;
 
     bool AIAssignedElement = false;
     bool CombatComplete = false;
@@ -165,6 +165,7 @@ public class ArenaController : MonoBehaviour
 		actions.Add("Area attack", All);
 		actions.Add("Next", StartNewRound);
 		actions.Add("Start the next round", StartNewRound);
+		actions.Add("Quit", Quit);
 
         keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
         keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -307,6 +308,8 @@ public class ArenaController : MonoBehaviour
             pauseActive = false;
             SceneManager.LoadScene("MainArena");
         }
+
+		SceneManager.LoadScene("MainArena");
     }
 
     void OnDestroy()
@@ -327,6 +330,11 @@ public class ArenaController : MonoBehaviour
             SceneManager.LoadScene("MainMenu");
         }
     }
+
+	public void Quit()
+	{
+			SceneManager.LoadScene("MainMenu");
+	}
 
     public void Buy()
     {
