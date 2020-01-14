@@ -45,6 +45,8 @@ public class ArenaController : MonoBehaviour
     string strOldTarget = "";
     float selectionConfirmationTimerLength = 3f;
     float selectionConfirmationTimer = 3f;
+    float shopConfirmationTimerLength = 3f;
+    float shopConfirmationTimer = 3f;
 
     float PlayerHealth = 100f;
 
@@ -62,6 +64,8 @@ public class ArenaController : MonoBehaviour
     bool isPointingIndexFingerAtMiddleEnemy;
     bool isPointingIndexFingerAtRightEnemy;
     bool isRightHandOpen;
+
+    bool isPointingAtNextRoundButton, isPointingAtShopButton, isPointingAtHealthUpgrade, isPointingAtCritChanceUpgrade, isPointingAtPendantGoldUpgrade, isPointingAtDefenceUpgrade, isPointingAtAttackDamageUpgrade;
 
     //Left Hand
     bool isLeftHandClosed;
@@ -143,6 +147,7 @@ public class ArenaController : MonoBehaviour
                 if (!AIAssignedElement) RandomAIElement();
                 if (!CombatComplete) CalculateCombat();
                 if (Input.GetKey(KeyCode.N)) StartNewRound();
+                LeapMotionPointingAtObject();
                 break;
             case "Shopping":
                 
@@ -373,7 +378,44 @@ public class ArenaController : MonoBehaviour
             pendantSelect.SetActive(false);
         }
     }
-
+    private void LeapMotionPointingAtObject()
+    {
+        if (isPointingOnlyWithIndexFinger && roundEnd == true)
+        {
+            if (isPointingAtNextRoundButton | isPointingAtShopButton | isPointingAtHealthUpgrade | isPointingAtCritChanceUpgrade | isPointingAtPendantGoldUpgrade | isPointingAtDefenceUpgrade | isPointingAtAttackDamageUpgrade)
+            {
+                shopConfirmationTimer -= Time.deltaTime;
+                if (isPointingAtNextRoundButton && shopConfirmationTimer <=0)
+                {
+                    shopConfirmationTimer = shopConfirmationTimerLength;
+                    StartNewRound();
+                }
+                if (isPointingAtShopButton && shopConfirmationTimer <= 0)
+                {
+                    shopConfirmationTimer = shopConfirmationTimerLength;
+                    Shop();
+                }
+                if (isPointingAtHealthUpgrade)
+                {
+                    healthSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                    }
+                }
+            }
+            else
+            {
+                shopConfirmationTimer = shopConfirmationTimerLength;
+                healthSelect.SetActive(false);
+            }
+        }
+        else
+        {
+            shopConfirmationTimer = shopConfirmationTimerLength;
+        }
+        ElementTargetConfirmation.fillAmount = 1 - (shopConfirmationTimer / shopConfirmationTimerLength);
+    }
 
     private void SelectionConfirmationTimer()
     {
@@ -743,6 +785,76 @@ public class ArenaController : MonoBehaviour
     {
         isLeftHandPalmPointingUp = false;
         //Debug.Log("Palm is Not Pointing Up");
+    }
+    public void RightIndexFingerIsPointingAtShopButtonIsActive()
+    {
+        isPointingAtShopButton = true;
+        //Debug.Log("Pointing At Shop Button");
+    }
+    public void RightIndexFingerIsPointingAtShopButtonIsDeactive()
+    {
+        isPointingAtShopButton = false;
+        //Debug.Log("NOT Pointing At Shop Button");
+    }
+    public void RightIndexFingerIsPointingAtNextRoundButtonIsActive()
+    {
+        isPointingAtNextRoundButton = true;
+        //Debug.Log("Pointing At Next Round Button");
+    }
+    public void RightIndexFingerIsPointingAtNextRoundButtonIsDeactive()
+    {
+        isPointingAtNextRoundButton = false;
+        //Debug.Log("NOT Pointing Next Round Button");
+    }
+    public void RightIndexFingerIsPointingAtHealthUpgradeButtonIsActive()
+    {
+        isPointingAtHealthUpgrade = true;
+        //Debug.Log("Pointing At Health Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtHealthUpgradeButtonIsDeactive()
+    {
+        isPointingAtHealthUpgrade = false;
+        //Debug.Log("NOT Pointing Health Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtCritChanceUpgradeButtonIsActive()
+    {
+        isPointingAtCritChanceUpgrade = true;
+        //Debug.Log("Pointing At Crit Chance Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtCritChanceUpgradeButtonIsDeactive()
+    {
+        isPointingAtCritChanceUpgrade = false;
+        //Debug.Log("NOT Pointing Crit Chance Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtAttackDamageUpgradeButtonIsActive()
+    {
+        isPointingAtAttackDamageUpgrade = true;
+        //Debug.Log("Pointing At Attack Damage Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtAttackDamageUpgradeButtonIsDeactive()
+    {
+        isPointingAtAttackDamageUpgrade = false;
+        //Debug.Log("NOT Pointing Attack Damage Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtDefenceUpgradeButtonIsActive()
+    {
+        isPointingAtDefenceUpgrade = true;
+        //Debug.Log("Pointing At Defence Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtDefenceUpgradeButtonIsDeactive()
+    {
+        isPointingAtDefenceUpgrade = false;
+        //Debug.Log("NOT Pointing Defence Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtPendantUpgradeButtonIsActive()
+    {
+        isPointingAtPendantGoldUpgrade = true;
+        //Debug.Log("Pointing At Pendant Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtPendantUpgradeButtonIsDeactive()
+    {
+        isPointingAtPendantGoldUpgrade = false;
+        //Debug.Log("NOT Pointing Pendant Upgrade Button");
     }
 
     private void Fire()
