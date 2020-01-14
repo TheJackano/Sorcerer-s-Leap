@@ -612,7 +612,7 @@ public class ArenaController : MonoBehaviour
             {
                 bool CritBool = HasCritBool();
                 string result = CompareTwoElements(strSelectedElement, Enemies[i].SelectedSpell);
-                if (result == "Win")
+                if (result == "Win" && Enemies[i].Alive == true)
                 {
                     if (CritBool) CalculatedDamage = (AttackDamage * CritDamage) - Enemies[i].Defence;
                     else CalculatedDamage = AttackDamage - Enemies[i].Defence;
@@ -620,7 +620,7 @@ public class ArenaController : MonoBehaviour
                     Enemies[i].Health -= CalculatedDamage / 3;
                 }
 
-                else if (result == "Lose")
+                else if (result == "Lose" && Enemies[i].Alive == true)
                 {
                     CalculatedDamage = Enemies[i].AttackDamage - DefenceStat;
                     if (CalculatedDamage < 0) CalculatedDamage = 0;
@@ -628,7 +628,7 @@ public class ArenaController : MonoBehaviour
                 }
             }
         }
-        else if (strSelectedTarget == "Left")
+        else if (strSelectedTarget == "Left" && Enemies[0].Alive == true)
         {
             bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[0].SelectedSpell);
@@ -646,7 +646,7 @@ public class ArenaController : MonoBehaviour
                 PlayerHealth -= CalculatedDamage;
             }
         }
-        else if (strSelectedTarget == "Middle")
+        else if (strSelectedTarget == "Middle" && Enemies[1].Alive == true)
         {
             bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[1].SelectedSpell);
@@ -665,7 +665,7 @@ public class ArenaController : MonoBehaviour
                 PlayerHealth -= CalculatedDamage;
             }
         }
-        else if (strSelectedTarget == "Right")
+        else if (strSelectedTarget == "Right" && Enemies[2].Alive == true)
         {
             bool CritBool = HasCritBool();
             string result = CompareTwoElements(strSelectedElement, Enemies[2].SelectedSpell);
@@ -689,7 +689,21 @@ public class ArenaController : MonoBehaviour
         for (int i = 0; i < objEnemies.Length; i++)
         {
             objEnemies[i].transform.Find("Canvas").Find("HealthFill").gameObject.GetComponent<Image>().fillAmount = Enemies[i].Health / 100;
-            if (Enemies[i].Health <= 0) Enemies[i].Alive = false;
+            if (Enemies[i].Health <= 0)
+            {
+                objEnemies[i].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[5];
+                Enemies[i].Alive = false;
+                objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Death");
+
+            }
+        }
+        if (Enemies[0].Health <= 0 && Enemies[1].Health <= 0 && Enemies[2].Health <= 0)
+        {
+            //Victroy
+        }
+        if(PlayerHealth <= 0)
+        {
+            //Defeat
         }
 
         BetweenRounds();
@@ -774,40 +788,43 @@ public class ArenaController : MonoBehaviour
     {
         for (int i = 0; i < objEnemies.Length; i++)
         {
-            int RandomNumber = UnityEngine.Random.Range(0, 99);
-            switch (RandomNumber)//"Fire","Earth","Water","Metal","Wood"
+            if (Enemies[i].Alive == true)
             {
-                case int n when n >= 0 && n <= 9://Fire
-                    Enemies[i].SelectedSpell = "Fire";
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Fire");
-                    break;
-                case int n when n >= 10 && n <= 19://Earth
-                    Enemies[i].SelectedSpell = "Earth";
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Earth");
-                    break;
-                case int n when n >= 20 && n <= 29://Water
-                    Enemies[i].SelectedSpell = "Water";
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Water");
-                    break;
-                case int n when n >= 30 && n <= 39://Metal
-                    Enemies[i].SelectedSpell = "Metal";
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Metal");
-                    break;
-                case int n when n >= 40 && n <= 49://Wood
-                    Enemies[i].SelectedSpell = "Wood";
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Wood");
-                    break;
-                case int n when n >= 50 && n <= 99://Affinity
-                    Enemies[i].SelectedSpell = Enemies[i].WizzardType;
-                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play(Enemies[i].WizzardType.ToString());
-                    //Debug.Log(Enemies[i].WizzardType + "Special");
-                    break;
+                int RandomNumber = UnityEngine.Random.Range(0, 99);
+                switch (RandomNumber)//"Fire","Earth","Water","Metal","Wood"
+                {
+                    case int n when n >= 0 && n <= 9://Fire
+                        Enemies[i].SelectedSpell = "Fire";
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Fire");
+                        break;
+                    case int n when n >= 10 && n <= 19://Earth
+                        Enemies[i].SelectedSpell = "Earth";
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Earth");
+                        break;
+                    case int n when n >= 20 && n <= 29://Water
+                        Enemies[i].SelectedSpell = "Water";
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Water");
+                        break;
+                    case int n when n >= 30 && n <= 39://Metal
+                        Enemies[i].SelectedSpell = "Metal";
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Metal");
+                        break;
+                    case int n when n >= 40 && n <= 49://Wood
+                        Enemies[i].SelectedSpell = "Wood";
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Wood");
+                        break;
+                    case int n when n >= 50 && n <= 99://Affinity
+                        Enemies[i].SelectedSpell = Enemies[i].WizzardType;
+                        objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play(Enemies[i].WizzardType.ToString());
+                        //Debug.Log(Enemies[i].WizzardType + "Special");
+                        break;
+                }
+                for (int k = 0; k < Element.Length; k++)
+                {
+                    if (Enemies[i].SelectedSpell == Element[k]) objEnemies[i].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[k];
+                }
+                //Debug.Log(Enemies[i].WizzardType + Enemies[i].SelectedSpell);
             }
-            for (int k = 0; k < Element.Length; k++)
-            {
-                if (Enemies[i].SelectedSpell == Element[k]) objEnemies[i].transform.Find("Canvas").Find("Image").gameObject.GetComponent<Image>().overrideSprite = imgElements[k];
-            }
-            //Debug.Log(Enemies[i].WizzardType + Enemies[i].SelectedSpell);
         }
         AIAssignedElement = true;
     } //Selectes a random element to each AI
