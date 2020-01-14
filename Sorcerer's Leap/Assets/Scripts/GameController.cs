@@ -47,6 +47,13 @@ public class GameController : MonoBehaviour
     float CritDamage = 1.5f;
     float Defence = 0f;
 
+	public int tutorial = 0;
+
+	public GameObject tutorial1;
+	public GameObject tutorial2;
+	public GameObject tutorial3;
+	public GameObject tutorial4;
+
     //Leap Motion Variables
     //Right Hand
     bool isPointingOnlyWithIndexFinger;
@@ -78,6 +85,45 @@ public class GameController : MonoBehaviour
 		actions.Add("resume", Resume);
 		actions.Add("restart", Restart);
 		actions.Add("main menu", Main);
+		actions.Add("Pause the Game", Pause);
+		actions.Add("Stop the game", Pause);
+		actions.Add("I'm not having fun", Pause);
+		actions.Add("Stop", Pause);
+		actions.Add("I'm tired", Pause);
+		actions.Add("Hold on", Pause);
+		actions.Add("Resume", Resume);
+		actions.Add("Resume the game", Resume);
+		actions.Add("Back to game", Resume);
+		actions.Add("Restart the Level", Restart);
+		actions.Add("Start over", Restart);
+		actions.Add("Next", Next);
+		actions.Add("Okay", Next);
+		actions.Add("Next one", Next);
+		actions.Add("Help", Help);
+		actions.Add("I don't know what to do", Help);
+		actions.Add("I choose fire", Fire);
+		actions.Add("Cast fire", Fire);
+		actions.Add("Cast water", Water);
+		actions.Add("I choose water", Water);
+		actions.Add("Cast earth", Earth);
+		actions.Add("I choose earth", Earth);
+		actions.Add("Cast wood", Wood);
+		actions.Add("I choose wood", Wood);
+		actions.Add("Cast metal", Metal);
+		actions.Add("I choose metal", Metal);
+		actions.Add("On the left guy", Left);
+		actions.Add("Attack the guy on the left", Left);
+		actions.Add("On the right guy", Right);
+		actions.Add("Attack the guy on the right", Right);
+		actions.Add("On the middle guy", Middle);
+		actions.Add("Attack the guy in middle", Middle);
+		actions.Add("Attack everyone", All);
+		actions.Add("On all of them", All);
+		actions.Add("All", All);
+		actions.Add("Do an area attack", All);
+		actions.Add("Area attack", All);
+		actions.Add("Everyone", All);
+		actions.Add("Target everyone", All);
 
 		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
 		keywordRecognizer.OnPhraseRecognized += VoiceInput;
@@ -547,6 +593,37 @@ public class GameController : MonoBehaviour
             keywordRecognizer.Dispose();
         }
     }
+
+	private void Next(){
+		tutorial++;
+		if(tutorial == 0){
+			tutorial1.SetActive(true);
+		}
+		if(tutorial == 1){
+			tutorial2.SetActive(true);
+			tutorial1.SetActive(false);
+		}
+		if(tutorial == 2){
+			tutorial3.SetActive(true);
+			tutorial2.SetActive(false);
+		}
+		if(tutorial == 3){
+			tutorial4.SetActive(true);
+			tutorial3.SetActive(false);
+		}
+		if(tutorial >= 4){
+			tutorial4.SetActive(false);
+		}
+	}
+
+	private void Help(){
+		tutorial4.SetActive(true);
+
+	}
+
+	public void All(){
+		strSelectedTarget = "All";
+	}
 }
     public class Enemy
 {
