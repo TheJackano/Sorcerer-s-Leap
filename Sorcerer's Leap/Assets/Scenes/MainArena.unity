@@ -7965,7 +7965,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 7873288b67a10eb44885222a7c465945, type: 3}
       propertyPath: m_Name
-      value: FireWizard
+      value: Wizard
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 7873288b67a10eb44885222a7c465945, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9464,7 +9464,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: 8b3c9f34c6469654d9ea9000e1f095f9, type: 3}
       propertyPath: m_Name
-      value: WaterWizard
+      value: Wizard
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 8b3c9f34c6469654d9ea9000e1f095f9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -15799,7 +15799,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100002, guid: c98573ef01784db498ea868e5b56f07d, type: 3}
       propertyPath: m_Name
-      value: MetalWizard
+      value: Wizard
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: c98573ef01784db498ea868e5b56f07d, type: 3}
       propertyPath: m_LocalPosition.x

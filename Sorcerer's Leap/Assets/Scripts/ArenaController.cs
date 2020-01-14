@@ -779,22 +779,27 @@ public class ArenaController : MonoBehaviour
             {
                 case int n when n >= 0 && n <= 9://Fire
                     Enemies[i].SelectedSpell = "Fire";
-				anim.Play("Fire");
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Fire");
                     break;
                 case int n when n >= 10 && n <= 19://Earth
                     Enemies[i].SelectedSpell = "Earth";
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Earth");
                     break;
                 case int n when n >= 20 && n <= 29://Water
                     Enemies[i].SelectedSpell = "Water";
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Water");
                     break;
                 case int n when n >= 30 && n <= 39://Metal
                     Enemies[i].SelectedSpell = "Metal";
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Metal");
                     break;
                 case int n when n >= 40 && n <= 49://Wood
                     Enemies[i].SelectedSpell = "Wood";
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play("Wood");
                     break;
                 case int n when n >= 50 && n <= 99://Affinity
                     Enemies[i].SelectedSpell = Enemies[i].WizzardType;
+                    objEnemies[i].transform.Find("Wizard").gameObject.GetComponent<Animator>().Play(Enemies[i].WizzardType.ToString());
                     //Debug.Log(Enemies[i].WizzardType + "Special");
                     break;
             }
