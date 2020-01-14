@@ -92,10 +92,9 @@ public class ArenaController : MonoBehaviour
     public GameObject between;
     public bool roundEnd;
 
-	public Animator anim;
-
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+    public GameObject Victory, Defeat;
 
     // Start is called before the first frame update
     void Start()
@@ -697,14 +696,8 @@ public class ArenaController : MonoBehaviour
 
             }
         }
-        if (Enemies[0].Health <= 0 && Enemies[1].Health <= 0 && Enemies[2].Health <= 0)
-        {
-            //Victroy
-        }
-        if(PlayerHealth <= 0)
-        {
-            //Defeat
-        }
+        if (Enemies[0].Health <= 0 && Enemies[1].Health <= 0 && Enemies[2].Health <= 0) Victory.SetActive(true);
+        if(PlayerHealth <= 0) Defeat.SetActive(true);
 
         BetweenRounds();
 

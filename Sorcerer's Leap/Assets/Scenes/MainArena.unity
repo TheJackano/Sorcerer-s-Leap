@@ -10068,6 +10068,8 @@ MonoBehaviour:
   between: {fileID: 1297032004}
   roundEnd: 0
   anim: {fileID: 0}
+  Victory: {fileID: 493313263}
+  Defeat: {fileID: 11514915}
 --- !u!4 &1092390196
 Transform:
   m_ObjectHideFlags: 0

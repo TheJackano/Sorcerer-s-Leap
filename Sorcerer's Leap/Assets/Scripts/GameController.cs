@@ -69,6 +69,7 @@ public class GameController : MonoBehaviour
     bool isLeftHandPalmPointingDown;
     bool isLeftHandPalmPointingRight;
     bool isLeftHandPalmPointingUp;
+    public GameObject End;
 
     void Start()
     {
@@ -313,14 +314,8 @@ public class GameController : MonoBehaviour
             objEnemies[i].transform.Find("Canvas").Find("HealthFill").gameObject.GetComponent<Image>().fillAmount = Enemies[i].Health / 100;
             if (Enemies[i].Health <= 0) Enemies[i].Alive = false;
         }
-        if (Enemies[0].Health <= 0 && Enemies[1].Health <= 0 && Enemies[2].Health <= 0)
-        {
-            //Victroy
-        }
-        if (PlayerHealth <= 0)
-        {
-            //Defeat
-        }
+        if (Enemies[0].Health <= 0 && Enemies[1].Health <= 0 && Enemies[2].Health <= 0) End.SetActive(true);
+        if (PlayerHealth <= 0) End.SetActive(true);
         CombatComplete = true;
     }
     private void StartNewRound()
