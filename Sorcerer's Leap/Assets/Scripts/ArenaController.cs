@@ -92,6 +92,10 @@ public class ArenaController : MonoBehaviour
     public GameObject between;
     public bool roundEnd;
 
+	public Animator anim;
+	public Animator anim1;
+	public Animator anim2;
+
     private KeywordRecognizer keywordRecognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
 
@@ -777,6 +781,9 @@ public class ArenaController : MonoBehaviour
             {
                 case int n when n >= 0 && n <= 9://Fire
                     Enemies[i].SelectedSpell = "Fire";
+				anim.Play("Fire");
+				anim1.Play("Fire");
+				anim2.Play("Fire");
                     break;
                 case int n when n >= 10 && n <= 19://Earth
                     Enemies[i].SelectedSpell = "Earth";
