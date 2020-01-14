@@ -65,7 +65,7 @@ public class ArenaController : MonoBehaviour
     bool isPointingIndexFingerAtRightEnemy;
     bool isRightHandOpen;
 
-    bool isPointingAtNextRoundButton, isPointingAtShopButton, isPointingAtHealthUpgrade, isPointingAtCritChanceUpgrade, isPointingAtPendantGoldUpgrade, isPointingAtDefenceUpgrade, isPointingAtAttackDamageUpgrade;
+    bool isPointingAtNextRoundButton, isPointingAtShopButton, isPointingAtHealthUpgrade, isPointingAtCritChanceUpgrade, isPointingAtPendantGoldUpgrade, isPointingAtDefenceUpgrade, isPointingAtAttackDamageUpgrade, isPointingAtCheckout;
 
     //Left Hand
     bool isLeftHandClosed;
@@ -79,6 +79,9 @@ public class ArenaController : MonoBehaviour
     public GameObject criticalSelect;
     public GameObject defenceSelect;
     public GameObject pendantSelect;
+    public GameObject checkoutSelect;
+    public GameObject newroundSelect;
+    public GameObject shopSelect;
 
     public float DefenceStat = 0f;
     public int moneyMultiplyer = 1;
@@ -271,6 +274,7 @@ public class ArenaController : MonoBehaviour
                 criticalSelect.SetActive(false);
                 defenceSelect.SetActive(false);
                 pendantSelect.SetActive(false);
+
             }
             camAnimation.Play("BackToFight");
         }
@@ -428,25 +432,85 @@ public class ArenaController : MonoBehaviour
     {
         if (isPointingOnlyWithIndexFinger && roundEnd == true)
         {
-            if (isPointingAtNextRoundButton | isPointingAtShopButton | isPointingAtHealthUpgrade | isPointingAtCritChanceUpgrade | isPointingAtPendantGoldUpgrade | isPointingAtDefenceUpgrade | isPointingAtAttackDamageUpgrade)
+            if (isPointingAtNextRoundButton | isPointingAtShopButton | isPointingAtHealthUpgrade | isPointingAtCritChanceUpgrade | isPointingAtPendantGoldUpgrade | isPointingAtDefenceUpgrade | isPointingAtAttackDamageUpgrade | isPointingAtCheckout)
             {
                 shopConfirmationTimer -= Time.deltaTime;
-                if (isPointingAtNextRoundButton && shopConfirmationTimer <=0)
+                if (isPointingAtNextRoundButton)
                 {
-                    shopConfirmationTimer = shopConfirmationTimerLength;
-                    StartNewRound();
+                    newroundSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        StartNewRound();
+                    }
                 }
-                if (isPointingAtShopButton && shopConfirmationTimer <= 0)
+                if (isPointingAtShopButton)
                 {
-                    shopConfirmationTimer = shopConfirmationTimerLength;
-                    Shop();
+                    shopSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        Shop();
+                    }
                 }
-                if (isPointingAtHealthUpgrade)
+                if (isPointingAtHealthUpgrade && gold >= 100)
                 {
                     healthSelect.SetActive(true);
                     if (shopConfirmationTimer <= 0)
                     {
                         shopConfirmationTimer = shopConfirmationTimerLength;
+                        PlayerHealth = 100f;
+                        gold = gold - 100;
+                    }
+                }
+                if (isPointingAtCritChanceUpgrade)
+                {
+                    criticalSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0 && gold >= 200)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        CritChance = CritChance + 1;
+                        gold = gold - 200;
+                    }
+                }
+                if (isPointingAtPendantGoldUpgrade)
+                {
+                    pendantSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0 && gold >= 100)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        moneyMultiplyer = moneyMultiplyer + 1;
+                        gold = gold - 100;
+                    }
+                }
+                if (isPointingAtDefenceUpgrade)
+                {
+                    defenceSelect.SetActive(true); 
+                    if (shopConfirmationTimer <= 0 && gold >= 200)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        DefenceStat = DefenceStat + 1;
+                        gold = gold - 200;
+                    }
+                }
+                if (isPointingAtAttackDamageUpgrade)
+                {
+                    attackSelect.SetActive(true); 
+                    if (shopConfirmationTimer <= 0 && gold >= 200)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        AttackDamage = AttackDamage + 1;
+                        gold = gold - 200;
+                    }
+                }
+                if (isPointingAtCheckout)
+                {
+                    checkoutSelect.SetActive(true);
+                    if (shopConfirmationTimer <= 0)
+                    {
+                        shopConfirmationTimer = shopConfirmationTimerLength;
+                        camAnimation.Play("BackToFight");
+                        shopOpen = false;
                     }
                 }
             }
@@ -454,6 +518,13 @@ public class ArenaController : MonoBehaviour
             {
                 shopConfirmationTimer = shopConfirmationTimerLength;
                 healthSelect.SetActive(false);
+                criticalSelect.SetActive(false);
+                pendantSelect.SetActive(false);
+                defenceSelect.SetActive(false);
+                attackSelect.SetActive(false);
+                checkoutSelect.SetActive(false);
+                newroundSelect.SetActive(false);
+                shopSelect.SetActive(false);
             }
         }
         else
@@ -901,6 +972,16 @@ public class ArenaController : MonoBehaviour
     {
         isPointingAtPendantGoldUpgrade = false;
         //Debug.Log("NOT Pointing Pendant Upgrade Button");
+    }
+    public void RightIndexFingerIsPointingAtCheckoutButtonIsActive()
+    {
+        isPointingAtCheckout = true;
+        //Debug.Log("Pointing At Checkout Button");
+    }
+    public void RightIndexFingerIsPointingAtCheckoutButtonIsDeactive()
+    {
+        isPointingAtCheckout = false;
+        //Debug.Log("NOT Pointing Checkout Button");
     }
 
     private void Fire()
