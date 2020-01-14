@@ -9997,12 +9997,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1197172621}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1087705979 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 8b3c9f34c6469654d9ea9000e1f095f9,
-    type: 3}
-  m_PrefabInstance: {fileID: 927031327}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1092390194
 GameObject:
   m_ObjectHideFlags: 0
@@ -10073,9 +10067,7 @@ MonoBehaviour:
   goldCount: {fileID: 1467747878}
   between: {fileID: 1297032004}
   roundEnd: 0
-  anim: {fileID: 1388296036}
-  anim1: {fileID: 1087705979}
-  anim2: {fileID: 1877855184}
+  anim: {fileID: 0}
 --- !u!4 &1092390196
 Transform:
   m_ObjectHideFlags: 0
@@ -13145,12 +13137,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1370015745}
   m_CullTransparentMesh: 0
---- !u!95 &1388296036 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 7873288b67a10eb44885222a7c465945,
-    type: 3}
-  m_PrefabInstance: {fileID: 697992031}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1390857005
 GameObject:
   m_ObjectHideFlags: 0
@@ -14866,12 +14852,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1859266970}
   m_CullTransparentMesh: 0
---- !u!95 &1877855184 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: c98573ef01784db498ea868e5b56f07d,
-    type: 3}
-  m_PrefabInstance: {fileID: 2122313760}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1879447496 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400002, guid: 8b3c9f34c6469654d9ea9000e1f095f9,
