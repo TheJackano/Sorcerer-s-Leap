@@ -594,7 +594,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-	private void Next(){
+	public void Next(){
 		tutorial++;
 		if(tutorial == 0){
 			tutorial1.SetActive(true);
