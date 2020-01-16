@@ -154,8 +154,14 @@ public class ArenaController : MonoBehaviour
 		actions.Add("the guy on the left", Left);
 		actions.Add("For the guy on the left", Left);
 		actions.Add("Attack the metal wizard", Right);
+		actions.Add("The grey wizard", Left);
+		actions.Add("On the grey wizard", Left);
 		actions.Add("right", Right);
 		actions.Add("On the metal wizard", Left);
+		actions.Add("The red wizard", Right);
+		actions.Add("On the red wizard", Right);
+		actions.Add("The blue wizard", Middle);
+		actions.Add("On the blue wizard", Middle);
 		actions.Add("On the right guy", Right);
 		actions.Add("For the guy on the right", Right);
 		actions.Add("the guy on the right", Right);
