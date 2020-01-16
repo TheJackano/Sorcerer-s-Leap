@@ -29,14 +29,14 @@ public class DictationRecogniser : MonoBehaviour
         m_DictationRecognizer.DictationResult += (text, confidence) =>
         {
             Debug.LogFormat("Dictation result: {0}", text);
-            m_recognitions.text += text + "/n";
+            m_recognitions.text += text + "";
             Keywords(m_recognitions.text);
         };
 
         m_DictationRecognizer.DictationHypothesis += (text) =>
         {
             Debug.LogFormat("Dictation hypothesis: {0}", text);
-            m_recognitions.text += text + "/n";
+            m_recognitions.text += text + "";
         };
 
         m_DictationRecognizer.DictationComplete += (completionCause) => {
@@ -62,7 +62,7 @@ public class DictationRecogniser : MonoBehaviour
     public void Keywords(string sentenceSpoken) {
         foreach (string stringToSearch in SpellKeywords)
         {
-            int KeywordCheck = stringToSearch.IndexOf(sentenceSpoken);
+            int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
 
             if (KeywordCheck != -1) {
                 activeKeyword = stringToSearch;
@@ -83,4 +83,11 @@ public class DictationRecogniser : MonoBehaviour
             Debug.Log("Options closed");
         }
     }
+
+	void OnDestroy(){
+		if(m_DictationRecognizer != null){
+			m_DictationRecognizer.Stop();
+			m_DictationRecognizer.Dispose();
+		}
+	}
 }

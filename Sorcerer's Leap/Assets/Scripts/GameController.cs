@@ -71,75 +71,49 @@ public class GameController : MonoBehaviour
     bool isLeftHandPalmPointingUp;
     public GameObject End;
 
+	[SerializeField]
+	private Text m_Hyphothesis;
+
+	[SerializeField]
+	private Text m_recognitions;
+
+	private DictationRecognizer m_DictationRecognizer;
+
+	public string[] FightKeywords;
+
+	private string activeKeyword;
+
     void Start()
     {
         StartNewRound();
 
-		actions.Add("fire", Fire);
-		actions.Add("water", Water);
-		actions.Add("earth", Earth);
-		actions.Add("wood", Wood);
-		actions.Add("metal", Metal);
-		actions.Add("left", Left);
-		actions.Add("right", Right);
-		actions.Add("middle", Middle);
-		actions.Add("pause", Pause);
-		actions.Add("resume", Resume);
-		actions.Add("restart", Restart);
-		actions.Add("main menu", Main);
-		actions.Add("Pause the Game", Pause);
-		actions.Add("Stop the game", Pause);
-		actions.Add("I'm not having fun", Pause);
-		actions.Add("Stop", Pause);
-		actions.Add("I'm tired", Pause);
-		actions.Add("Hold on", Pause);
-		actions.Add("Resume", Resume);
-		actions.Add("Resume the game", Resume);
-		actions.Add("Back to game", Resume);
-		actions.Add("Restart the Level", Restart);
-		actions.Add("Start over", Restart);
-		actions.Add("I understand", Next);
-		actions.Add("Okay", Next);
-		actions.Add("Next one", Next);
-		actions.Add("Help", Help);
-		actions.Add("I don't know what to do", Help);
-		actions.Add("I choose fire", Fire);
-		actions.Add("Cast fire", Fire);
-		actions.Add("Cast water", Water);
-		actions.Add("I choose water", Water);
-		actions.Add("Cast earth", Earth);
-		actions.Add("I choose earth", Earth);
-		actions.Add("Cast wood", Wood);
-		actions.Add("I choose wood", Wood);
-		actions.Add("Cast metal", Metal);
-		actions.Add("I choose metal", Metal);
-		actions.Add("On the left guy", Left);
-		actions.Add("Attack the guy on the left", Left);
-		actions.Add("On the right guy", Right);
-		actions.Add("Attack the guy on the right", Right);
-		actions.Add("On the middle guy", Middle);
-		actions.Add("Attack the guy in middle", Middle);
-		actions.Add("Attack everyone", All);
-		actions.Add("On all of them", All);
-		actions.Add("All", All);
-		actions.Add("Do an area attack", All);
-		actions.Add("Area attack", All);
-		actions.Add("Everyone", All);
-		actions.Add("Target everyone", All);
-		actions.Add("Next", StartNewRound);
-		actions.Add("Next round", StartNewRound);
-		actions.Add("What now", StartNewRound);
-		actions.Add("Move on", StartNewRound);
-		actions.Add("Retry", Restart);
-		actions.Add("Try again", Restart);
-		actions.Add("Play", Arena);
-		actions.Add("Play game", Arena);
-		actions.Add("Go to Arena", Arena);
-		actions.Add("Quit", MainTwo);
+		m_DictationRecognizer = new DictationRecognizer();
 
-		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
-		keywordRecognizer.OnPhraseRecognized += VoiceInput;
-		keywordRecognizer.Start();
+		m_DictationRecognizer.DictationResult += (text, confidence) =>
+		{
+			Debug.LogFormat("Dictation result: {0}", text);
+			m_recognitions.text += text + "";
+			Keywords(m_recognitions.text);
+		};
+
+		m_DictationRecognizer.DictationHypothesis += (text) =>
+		{
+			Debug.LogFormat("Dictation hypothesis: {0}", text);
+			m_recognitions.text += text + "";
+		};
+
+		m_DictationRecognizer.DictationComplete += (completionCause) => {
+			if (completionCause != DictationCompletionCause.Complete)
+				Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}", completionCause);
+
+		};
+
+		m_DictationRecognizer.DictationError += (error, hresult) =>
+		{
+			Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}", error, hresult);
+		};
+
+		m_DictationRecognizer.Start();
     }
     void Update()
     {
@@ -526,128 +500,154 @@ public class GameController : MonoBehaviour
         isLeftHandPalmPointingUp = false;
         //Debug.Log("Palm is Not Pointing Up");
     }
-    private void VoiceInput(PhraseRecognizedEventArgs speech)
-    {
-        Debug.Log(speech.text);
-        actions[speech.text].Invoke();
-    }
-    private void Fire()
-    {
-        strSelectedElement = "Fire";
-    }
-    private void Water()
-    {
-        strSelectedElement = "Water";
-    }
-    private void Earth()
-    {
-        strSelectedElement = "Earth";
-    }
-    private void Wood()
-    {
-        strSelectedElement = "Wood";
-    }
-    private void Metal()
-    {
-        strSelectedElement = "Metal";
-    }
-    private void Left()
-    {
-        strSelectedTarget = "Left";
-    }
-    private void Right()
-    {
-        strSelectedTarget = "Right";
-    }
-    private void Middle()
-    {
-        strSelectedTarget = "Middle";
-    }
-    private void Pause()
-    {
-        pause.SetActive(true);
-        pauseActive = true;
-        Time.timeScale = 0;
-    }
-    private void Resume()
-    {
-        if (pauseActive == true)
-        {
-            pause.SetActive(false);
-            pauseActive = false;
-            Time.timeScale = 1;
-        }
-    }
-    private void Restart()
-    {
-        if (pauseActive == true)
-        {
-            SceneManager.LoadScene("TutorialCourtyard");
-            pauseActive = false;
-            Time.timeScale = 1;
-        }
-    }
-    private void Main()
-    {
-        if (pauseActive == true)
-        {
-            SceneManager.LoadScene("MainMenu");
-            pauseActive = false;
-            Time.timeScale = 1;
-        }
-    }
-    void OnDestroy()
-    {
-        if (keywordRecognizer != null)
-        {
-            keywordRecognizer.Stop();
-            keywordRecognizer.Dispose();
-        }
-    }
-
-	public void Next(){
-		tutorial++;
-		if(tutorial == 0){
-			tutorial1.SetActive(true);
-		}
-		if(tutorial == 1){
-			tutorial2.SetActive(true);
-			tutorial1.SetActive(false);
-		}
-		if(tutorial == 2){
-			tutorial3.SetActive(true);
-			tutorial2.SetActive(false);
-		}
-		if(tutorial == 3){
-			tutorial4.SetActive(true);
-			tutorial3.SetActive(false);
-		}
-		if(tutorial >= 4){
-			tutorial4.SetActive(false);
-		}
-	}
-
-	private void Help(){
-		tutorial4.SetActive(true);
-
-	}
-
-	public void All(){
-		strSelectedTarget = "All";
-	}
-
-	public void Arena(){
-		if(tutorialComplete == true){
-		SceneManager.LoadScene("MainArena");
-		}
-	}
-
-	private void MainTwo()
-	{
-		if (tutorialComplete == true)
+		
+	public void Keywords(string sentenceSpoken) {
+		foreach (string stringToSearch in FightKeywords)
 		{
+			int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
+
+			if (KeywordCheck != -1) {
+				activeKeyword = stringToSearch;
+				print(activeKeyword);
+			}
+		}
+
+
+		if (activeKeyword == "fire")
+		{
+			strSelectedElement = "Fire";
+		}
+
+		if (activeKeyword == "water") {
+			strSelectedElement = "Water";
+		}
+
+		if (activeKeyword == "earth") {
+			strSelectedElement = "Earth";
+		}
+
+		if (activeKeyword == "wood") {
+			strSelectedElement = "Wood";
+		}
+
+		if (activeKeyword == "metal") {
+			strSelectedElement = "Metal";
+		}
+
+		if (activeKeyword == "left") {
+			strSelectedTarget = "Left";
+		}
+
+		if (activeKeyword == "right") {
+			strSelectedTarget = "Right";
+		}
+
+		if (activeKeyword == "middle") {
+			strSelectedTarget = "Middle";
+		}
+
+		if (activeKeyword == "everyone") {
+			strSelectedTarget = "All";
+		}
+
+		if (activeKeyword == "pause") {
+			pause.SetActive(true);
+			pauseActive = true;
+			Time.timeScale = 0;
+		}
+
+		if (activeKeyword == "resume") {
+			if (pauseActive == true)
+			{
+				pause.SetActive(false);
+				pauseActive = false;
+				Time.timeScale = 1;
+			}
+		}
+
+		if (activeKeyword == "restart") {
+			if (pauseActive == true)
+			{
+				SceneManager.LoadScene("TutorialCourtyard");
+				pauseActive = false;
+				Time.timeScale = 1;
+			}
+		}
+
+		if (activeKeyword == "main menu") {
+			if (pauseActive == true)
+			{
+				SceneManager.LoadScene("MainMenu");
+				pauseActive = false;
+				Time.timeScale = 1;
+			}
+		}
+
+		if(activeKeyword == "quit"){
 			SceneManager.LoadScene("MainMenu");
-			pauseActive = false;
+		}
+
+		if(activeKeyword == "help"){
+			tutorial4.SetActive(true);
+		}
+
+		if(activeKeyword == "arena"){
+			SceneManager.LoadScene("MainArena");
+		}
+
+		if(activeKeyword == "understand"){
+			tutorial++;
+			if(tutorial == 0){
+				tutorial1.SetActive(true);
+			}
+			if(tutorial == 1){
+				tutorial2.SetActive(true);
+				tutorial1.SetActive(false);
+			}
+			if(tutorial == 2){
+				tutorial3.SetActive(true);
+				tutorial2.SetActive(false);
+			}
+			if(tutorial == 3){
+				tutorial4.SetActive(true);
+				tutorial3.SetActive(false);
+			}
+			if(tutorial >= 4){
+				tutorial4.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "okay"){
+			tutorial++;
+			if(tutorial == 0){
+				tutorial1.SetActive(true);
+			}
+			if(tutorial == 1){
+				tutorial2.SetActive(true);
+				tutorial1.SetActive(false);
+			}
+			if(tutorial == 2){
+				tutorial3.SetActive(true);
+				tutorial2.SetActive(false);
+			}
+			if(tutorial == 3){
+				tutorial4.SetActive(true);
+				tutorial3.SetActive(false);
+			}
+			if(tutorial >= 4){
+				tutorial4.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "next round"){
+			StartNewRound();
+		}
+	}
+
+	void OnDestroy(){
+		if(m_DictationRecognizer != null){
+			m_DictationRecognizer.Stop();
+			m_DictationRecognizer.Dispose();
 		}
 	}
 }
