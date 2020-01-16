@@ -103,8 +103,10 @@ public class ArenaController : MonoBehaviour
 
         actions.Add("Shop", Shop);
 		actions.Add("Go to Shop", Shop);
+        actions.Add("I want to go shopping", Shop);
         actions.Add("Checkout", Checkout);
 		actions.Add("Leave the Shop", Checkout);
+        actions.Add("Back to battle", Checkout);
         actions.Add("Pause", Pause);
 		actions.Add("Pause the Game", Pause);
 		actions.Add("Stop the game", Pause);
@@ -123,17 +125,25 @@ public class ArenaController : MonoBehaviour
 		actions.Add("I want", Buy);
         actions.Add("Health", Health);
 		actions.Add("The red potion", Health);
+        actions.Add("Health potion", Health);
+        actions.Add("A health potion", Health);
         actions.Add("Attack", Attack);
 		actions.Add("The sword", Attack);
+        actions.Add("A sword", Attack);
         actions.Add("Defence", Defence);
 		actions.Add("The shield", Defence);
+        actions.Add("A shield", Defence);
         actions.Add("Crit Chance", Crit);
 		actions.Add("The blue potion", Crit);
+        actions.Add("The critical chance potion", Crit);
+        actions.Add("Critical change", Crit);
         actions.Add("Pendant", Pendant);
 		actions.Add("The pendant", Pendant);
+        actions.Add("The gold necklace", Pendant);
         actions.Add("Remove", Remove);
 		actions.Add("Take off", Remove);
 		actions.Add("I don't want", Remove);
+        actions.Add("Get rid of", Remove);
 		actions.Add("fire", Fire);
 		actions.Add("I choose fire", Fire);
 		actions.Add("Cast fire", Fire);
