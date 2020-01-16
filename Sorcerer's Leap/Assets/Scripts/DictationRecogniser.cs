@@ -6,88 +6,85 @@ using UnityEngine.Windows.Speech;
 using UnityEngine.SceneManagement;
 public class DictationRecogniser : MonoBehaviour
 {
-    [SerializeField]
-    private Text m_Hyphothesis;
+	[SerializeField]
+	private Text m_Hyphothesis;
 
-    [SerializeField]
-    private Text m_recognitions;
+	[SerializeField]
+	private Text m_recognitions;
 
-    private DictationRecognizer m_DictationRecognizer;
+	private DictationRecognizer m_DictationRecognizer;
 
-    public string[] SpellKeywords;
-    public string[] TargetKeywords;
-    public string[] MenuKeywords;
-    public string[] ShopKeywords;
+	public string[] SpellKeywords;
+	public string[] TargetKeywords;
+	public string[] MenuKeywords;
+	public string[] ShopKeywords;
 
-    private string activeKeyword;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_DictationRecognizer = new DictationRecognizer();
+	private string activeKeyword;
 
-        m_DictationRecognizer.DictationResult += (text, confidence) =>
-        {
-            Debug.LogFormat("Dictation result: {0}", text);
-            m_recognitions.text += text + "";
-            Keywords(m_recognitions.text);
-        };
+	public GameObject cube;
 
-        m_DictationRecognizer.DictationHypothesis += (text) =>
-        {
-            Debug.LogFormat("Dictation hypothesis: {0}", text);
-            m_recognitions.text += text + "";
-        };
+	// Start is called before the first frame update
+	void Start()
+	{
+		m_DictationRecognizer = new DictationRecognizer();
 
-        m_DictationRecognizer.DictationComplete += (completionCause) => {
-            if (completionCause != DictationCompletionCause.Complete)
-                Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}", completionCause);
-            
-        };
+		m_DictationRecognizer.DictationResult += (text, confidence) =>
+		{
+			Debug.LogFormat("Dictation result: {0}", text);
+			m_recognitions.text += text + "/n";
+			Keywords(m_recognitions.text);
+		};
 
-        m_DictationRecognizer.DictationError += (error, hresult) =>
-        {
-            Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}", error, hresult);
-        };
+		m_DictationRecognizer.DictationHypothesis += (text) =>
+		{
+			Debug.LogFormat("Dictation hypothesis: {0}", text);
+			m_recognitions.text += text + "/n";
+		};
 
-        m_DictationRecognizer.Start();
-    }
+		m_DictationRecognizer.DictationComplete += (completionCause) => {
+			if (completionCause != DictationCompletionCause.Complete)
+				Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}", completionCause);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+		};
 
-    public void Keywords(string sentenceSpoken) {
-        foreach (string stringToSearch in SpellKeywords)
-        {
-            int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
+		m_DictationRecognizer.DictationError += (error, hresult) =>
+		{
+			Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}", error, hresult);
+		};
 
-            if (KeywordCheck != -1) {
-                activeKeyword = stringToSearch;
-            }
-        }
+		m_DictationRecognizer.Start();
+	}
+
+	// Update is called once per frame
+	void Update()
+	{
+
+	}
+
+	public void Keywords(string sentenceSpoken) {
+		foreach (string stringToSearch in SpellKeywords)
+		{
+			int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
+			print(KeywordCheck);
+
+			if (KeywordCheck != -1) {
+				activeKeyword = stringToSearch;
+				print(activeKeyword);
+			}
+		}
 
 
-        if (activeKeyword == "Play")
-        {
-            SceneManager.LoadScene("TutorialCourtyard");
-        }
+		if (activeKeyword == "On")
+		{
+			cube.SetActive(true);
+		}
 
-        if (activeKeyword == "Options") {
-            Debug.Log("Options open");
-        }
+		if (activeKeyword == "Off") {
+			cube.SetActive(false);
+		}
 
-        if (activeKeyword == "Back") {
-            Debug.Log("Options closed");
-        }
-    }
-
-	void OnDestroy(){
-		if(m_DictationRecognizer != null){
-			m_DictationRecognizer.Stop();
-			m_DictationRecognizer.Dispose();
+		if (activeKeyword == "Back") {
+			Debug.Log("Options closed");
 		}
 	}
 }

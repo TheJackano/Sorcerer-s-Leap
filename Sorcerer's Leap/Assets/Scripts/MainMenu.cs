@@ -1,109 +1,72 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Windows.Speech;
 using UnityEngine.SceneManagement;
+using UnityEngine.Windows.Speech;
 
 public class MainMenu : MonoBehaviour
 {
-	[SerializeField]
-	private Text m_Hyphothesis;
 
-	[SerializeField]
-	private Text m_recognitions;
+	public GameObject menu;
+	public GameObject options;
+	public GameObject playMarker;
+	public GameObject optionMarker;
+	public GameObject quitMarker;
 
-	private DictationRecognizer m_DictationRecognizer;
+	private KeywordRecognizer keywordRecognizer;
+	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+	// Start is called before the first frame update
+	void Start()
+	{
+		actions.Add("Play", Play);
+		actions.Add("Options", Options);
+		actions.Add("Quit", Quit);
+		actions.Add("Back", Back);
 
-	public string[] MenuKeywords;
+		keywordRecognizer = new KeywordRecognizer (actions.Keys.ToArray());
+		keywordRecognizer.OnPhraseRecognized += VoiceInput;
+		keywordRecognizer.Start();
+	}
 
-	private string activeKeyword;
+	// Update is called once per frame
+	void Update()
+	{
 
-    public GameObject menu;
-    public GameObject options;
-    public GameObject playMarker;
-    public GameObject optionMarker;
-    public GameObject quitMarker;
+	}
 
+	private void VoiceInput(PhraseRecognizedEventArgs speech){
+		Debug.Log(speech.text);
+		actions[speech.text].Invoke();
+	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-		m_DictationRecognizer = new DictationRecognizer();
+	public void Play() {
+		playMarker.SetActive(true);
+		SceneManager.LoadScene("TutorialCourtyard");
+	}
 
-		m_DictationRecognizer.DictationResult += (text, confidence) =>
-		{
-			Debug.LogFormat("Dictation result: {0}", text);
-			m_recognitions.text += text + "";
-			Keywords(m_recognitions.text);
-		};
+	public void Quit() {
+		quitMarker.SetActive(true);
+		Application.Quit();
+	}
 
-		m_DictationRecognizer.DictationHypothesis += (text) =>
-		{
-			Debug.LogFormat("Dictation hypothesis: {0}", text);
-			m_recognitions.text += text + "";
-		};
+	public void Options() {
+		optionMarker.SetActive(true);
+		menu.SetActive(false);
+		options.SetActive(true);
+		optionMarker.SetActive(false);
+	}
 
-		m_DictationRecognizer.DictationComplete += (completionCause) => {
-			if (completionCause != DictationCompletionCause.Complete)
-				Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}", completionCause);
-
-		};
-
-		m_DictationRecognizer.DictationError += (error, hresult) =>
-		{
-			Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}", error, hresult);
-		};
-
-		m_DictationRecognizer.Start();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-	public void Keywords(string sentenceSpoken) {
-		foreach (string stringToSearch in MenuKeywords)
-		{
-			int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
-			print(KeywordCheck);
-
-			if (KeywordCheck != -1) {
-				activeKeyword = stringToSearch;
-				print(activeKeyword);
-			}
-		}
-			
-		if (activeKeyword == "play")
-		{
-			playMarker.SetActive(true);
-			SceneManager.LoadScene("TutorialCourtyard");
-		}
-
-		if (activeKeyword == "options") {
-			optionMarker.SetActive(true);
-			menu.SetActive(false);
-			options.SetActive(true);
-			optionMarker.SetActive(false);
-		}
-
-		if (activeKeyword == "back") {
-			options.SetActive(false);
-			menu.SetActive(true);
-		}
-
-		if(activeKeyword == "quit"){
-			quitMarker.SetActive(true);
-			Application.Quit();
-		}
+	public void Back() {
+		options.SetActive(false);
+		menu.SetActive(true);
 	}
 
 	void OnDestroy(){
-		if(m_DictationRecognizer != null){
-			m_DictationRecognizer.Stop();
-			m_DictationRecognizer.Dispose();
+		if(keywordRecognizer != null){
+			keywordRecognizer.Stop();
+			keywordRecognizer.Dispose();
 		}
 	}
 }
