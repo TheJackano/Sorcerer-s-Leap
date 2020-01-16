@@ -92,104 +92,52 @@ public class ArenaController : MonoBehaviour
     public GameObject between;
     public bool roundEnd;
 
-    private KeywordRecognizer keywordRecognizer;
-    private Dictionary<string, Action> actions = new Dictionary<string, Action>();
     public GameObject Victory, Defeat;
+
+	[SerializeField]
+	private Text m_Hyphothesis;
+
+	[SerializeField]
+	private Text m_recognitions;
+
+	private DictationRecognizer m_DictationRecognizer;
+
+	public string[] ArenaKeywords;
+
+	private string activeKeyword;
 
     // Start is called before the first frame update
     void Start()
     {
         StartNewRound();
 
-        actions.Add("Shop", Shop);
-		actions.Add("Go to Shop", Shop);
-        actions.Add("I want to go shopping", Shop);
-        actions.Add("Checkout", Checkout);
-		actions.Add("Leave the Shop", Checkout);
-        actions.Add("Back to battle", Checkout);
-        actions.Add("Pause", Pause);
-		actions.Add("Pause the Game", Pause);
-		actions.Add("Stop the game", Pause);
-		actions.Add("I'm not having fun", Pause);
-		actions.Add("I'm tired", Pause);
-		actions.Add("Hold on", Pause);
-        actions.Add("Resume", Resume);
-		actions.Add("Resume the game", Resume);
-		actions.Add("Back to game", Resume);
-        actions.Add("Restart", Restart);
-		actions.Add("Restart the Level", Restart);
-		actions.Add("Start over", Restart);
-        actions.Add("Main Menu", Main);
-        actions.Add("Buy", Buy);
-		actions.Add("I want to buy", Buy);
-		actions.Add("I want", Buy);
-        actions.Add("Health", Health);
-		actions.Add("The red potion", Health);
-        actions.Add("Health potion", Health);
-        actions.Add("A health potion", Health);
-        actions.Add("Attack", Attack);
-		actions.Add("The sword", Attack);
-        actions.Add("A sword", Attack);
-        actions.Add("Defence", Defence);
-		actions.Add("The shield", Defence);
-        actions.Add("A shield", Defence);
-        actions.Add("Crit Chance", Crit);
-		actions.Add("The blue potion", Crit);
-        actions.Add("The critical chance potion", Crit);
-        actions.Add("Critical change", Crit);
-        actions.Add("Pendant", Pendant);
-		actions.Add("The pendant", Pendant);
-        actions.Add("The gold necklace", Pendant);
-        actions.Add("Remove", Remove);
-		actions.Add("Take off", Remove);
-		actions.Add("I don't want", Remove);
-        actions.Add("Get rid of", Remove);
-		actions.Add("fire", Fire);
-		actions.Add("I choose fire", Fire);
-		actions.Add("Cast fire", Fire);
-		actions.Add("water", Water);
-		actions.Add("Cast water", Water);
-		actions.Add("I choose water", Water);
-		actions.Add("earth", Earth);
-		actions.Add("Cast earth", Earth);
-		actions.Add("I choose earth", Earth);
-		actions.Add("wood", Wood);
-		actions.Add("Cast wood", Wood);
-		actions.Add("I choose wood", Wood);
-		actions.Add("metal", Metal);
-		actions.Add("Cast metal", Metal);
-		actions.Add("I choose metal", Metal);
-		actions.Add("left", Left);
-		actions.Add("On the left guy", Left);
-		actions.Add("the guy on the left", Left);
-		actions.Add("For the guy on the left", Left);
-		actions.Add("Attack the metal wizard", Right);
-		actions.Add("right", Right);
-		actions.Add("On the metal wizard", Left);
-		actions.Add("On the right guy", Right);
-		actions.Add("For the guy on the right", Right);
-		actions.Add("the guy on the right", Right);
-		actions.Add("Attack the fire wizard", Right);
-		actions.Add("On the fire wizard", Right);
-		actions.Add("middle", Middle);
-		actions.Add("On the water wizard", Middle);
-		actions.Add("On the middle guy", Middle);
-		actions.Add("the guy in middle", Middle);
-		actions.Add("Attack the water wizard", Middle);
-		actions.Add("Attack everyone", All);
-		actions.Add("On all of them", All);
-		actions.Add("Everyone", All);
-		actions.Add("On everyone", All);
-		actions.Add("All", All);
-		actions.Add("Do an area attack", All);
-		actions.Add("Area attack", All);
-		actions.Add("Next", StartNewRound);
-		actions.Add("Start the next round", StartNewRound);
-		actions.Add("Quit", Quit);
+		m_DictationRecognizer = new DictationRecognizer();
 
-        keywordRecognizer = new KeywordRecognizer(actions.Keys.ToArray());
-        keywordRecognizer.OnPhraseRecognized += VoiceInput;
-        keywordRecognizer.Start();
+		m_DictationRecognizer.DictationResult += (text, confidence) =>
+		{
+			Debug.LogFormat("Dictation result: {0}", text);
+			m_recognitions.text += text + "";
+			Keywords(m_recognitions.text);
+		};
+
+		m_DictationRecognizer.DictationHypothesis += (text) =>
+		{
+			Debug.LogFormat("Dictation hypothesis: {0}", text);
+			m_recognitions.text += text + "";
+		};
+
+		m_DictationRecognizer.DictationComplete += (completionCause) => {
+			if (completionCause != DictationCompletionCause.Complete)
+				Debug.LogErrorFormat("Dictation completed unsuccessfully: {0}", completionCause);
+
+		};
+
+		m_DictationRecognizer.DictationError += (error, hresult) =>
+		{
+			Debug.LogErrorFormat("Dictation error: {0}; HResult = {1}", error, hresult);
+		};
+
+		m_DictationRecognizer.Start();
 
         camAnimation = camera.GetComponent<Animator>();
     }
@@ -235,228 +183,7 @@ public class ArenaController : MonoBehaviour
         if(Input.GetKeyDown("f")) strSelectedTarget = "All";
 
     }
-    private void VoiceInput(PhraseRecognizedEventArgs speech)
-    {
-        Debug.Log(speech.text);
-        actions[speech.text].Invoke();
-    }
-
-    public void Shop()
-    {
-        if (roundEnd == true)
-        {
-            shopOpen = true;
-            camAnimation.Play("Shop");
-        }
-    }
-
-    public void Checkout()
-    {
-        if (shopOpen == true)
-        {
-            if (buying == true)
-            {
-                if (health == true)
-                {
-                    PlayerHealth = 100f;
-					gold = gold - 100;
-                }
-                if (defence == true)
-                {
-                    DefenceStat = DefenceStat + 1;
-					gold = gold - 200;
-                }
-                if (criticalChance == true)
-                {
-                    CritChance = CritChance + 1;
-					gold = gold - 200;
-                }
-                if (attack == true)
-                {
-                    AttackDamage = AttackDamage + 1;
-					gold = gold - 200;
-                }
-
-                if (pendant == true)
-                {
-                    moneyMultiplyer = moneyMultiplyer + 1;
-					gold = gold - 100;
-                }
-
-                shopOpen = false;
-                buying = false;
-                health = false;
-                defence = false;
-                criticalChance = false;
-                pendant = false;
-                attack = false;
-                removing = false;
-                healthSelect.SetActive(false);
-                attackSelect.SetActive(false);
-                criticalSelect.SetActive(false);
-                defenceSelect.SetActive(false);
-                pendantSelect.SetActive(false);
-
-            }
-            camAnimation.Play("BackToFight");
-        }
-    }
-
-    public void Pause()
-    {
-        pauseMenu.SetActive(true);
-        pauseActive = true;
-        Time.timeScale = 0;
-    }
-
-    public void Resume()
-    {
-        if (pauseActive == true)
-        {
-            pauseMenu.SetActive(false);
-            Time.timeScale = 1;
-            pauseActive = false;
-        }
-    }
-
-    public void Restart()
-    {
-        if (pauseActive == true)
-        {
-            pauseMenu.SetActive(false);
-            Time.timeScale = 1;
-            pauseActive = false;
-            SceneManager.LoadScene("MainArena");
-        }
-
-		SceneManager.LoadScene("MainArena");
-    }
-
-    void OnDestroy()
-    {
-        if (keywordRecognizer != null)
-        {
-            keywordRecognizer.Stop();
-            keywordRecognizer.Dispose();
-        }
-    }
-
-    public void Main()
-    {
-        if (pauseActive == true)
-        {
-            pauseMenu.SetActive(false);
-            Time.timeScale = 1;
-            SceneManager.LoadScene("MainMenu");
-        }
-    }
-
-	public void Quit()
-	{
-			SceneManager.LoadScene("MainMenu");
-	}
-
-    public void Buy()
-    {
-        if (shopOpen == true)
-        {
-            buying = true;
-            removing = false;
-        }
-    }
-
-    public void Remove()
-    {
-        if (shopOpen == true)
-        {
-            removing = true;
-            buying = false;
-        }
-    }
-
-    public void Health()
-    {
-        if (buying == true)
-        {
-			if(gold >= 100){
-            health = true;
-            healthSelect.SetActive(true);
-			}
-        }
-        if (removing == true)
-        {
-            health = false;
-            healthSelect.SetActive(false);
-        }
-    }
-
-    public void Defence()
-    {
-        if (buying == true)
-        {
-			if(gold >= 200){
-            defence = true;
-            defenceSelect.SetActive(true);
-			}
-        }
-        if (removing == true)
-        {
-            defence = false;
-            defenceSelect.SetActive(false);
-        }
-    }
-
-    public void Attack()
-    {
-        if (buying == true)
-        {
-			if(gold >= 200){
-            attack = true;
-            attackSelect.SetActive(true);
-			}
-        }
-        if (removing == true)
-        {
-            attack = false;
-            attackSelect.SetActive(false);
-        }
-    }
-
-    public void Crit()
-    {
-        if (buying == true)
-        {
-			if(gold >= 200){
-            criticalChance = true;
-            criticalSelect.SetActive(true);
-			}
-        }
-        if (removing == true)
-        {
-            criticalChance = false;
-            criticalSelect.SetActive(false);
-        }
-    }
-
-    public void Pendant()
-    {
-        if (buying == true)
-        {
-			if(gold >= 100){
-            pendant = true;
-            pendantSelect.SetActive(true);
-			}
-        }
-        if (removing == true)
-        {
-            pendant = false;
-            pendantSelect.SetActive(false);
-        }
-    }
-
-	public void All(){
-		strSelectedTarget = "All";
-	}
+		
     private void LeapMotionPointingAtObject()
     {
         if (isPointingOnlyWithIndexFinger && roundEnd == true)
@@ -1030,38 +757,274 @@ public class ArenaController : MonoBehaviour
         //Debug.Log("NOT Pointing Checkout Button");
     }
 
-    private void Fire()
-    {
-        strSelectedElement = "Fire";
-    }
-    private void Water()
-    {
-        strSelectedElement = "Water";
-    }
-    private void Earth()
-    {
-        strSelectedElement = "Earth";
-    }
-    private void Wood()
-    {
-        strSelectedElement = "Wood";
-    }
-    private void Metal()
-    {
-        strSelectedElement = "Metal";
-    }
-    private void Left()
-    {
-        strSelectedTarget = "Left";
-    }
-    private void Right()
-    {
-        strSelectedTarget = "Right";
-    }
-    private void Middle()
-    {
-        strSelectedTarget = "Middle";
-    }
+	public void Shop(){
+		if (roundEnd == true)
+		{
+			shopOpen = true;
+			camAnimation.Play("Shop");
+		}
+	}
+
+	public void Keywords(string sentenceSpoken) {
+		foreach (string stringToSearch in ArenaKeywords)
+		{
+			int KeywordCheck = sentenceSpoken.IndexOf(stringToSearch);
+
+			if (KeywordCheck != -1) {
+				activeKeyword = stringToSearch;
+				print(activeKeyword);
+			}
+		}
+
+	if (activeKeyword == "fire")
+	{
+		strSelectedElement = "Fire";
+	}
+
+	if (activeKeyword == "water") {
+		strSelectedElement = "Water";
+	}
+
+	if (activeKeyword == "earth") {
+		strSelectedElement = "Earth";
+	}
+
+	if (activeKeyword == "wood") {
+		strSelectedElement = "Wood";
+	}
+
+	if (activeKeyword == "metal") {
+		strSelectedElement = "Metal";
+	}
+
+	if (activeKeyword == "left") {
+		strSelectedTarget = "Left";
+	}
+
+	if (activeKeyword == "right") {
+		strSelectedTarget = "Right";
+	}
+
+	if (activeKeyword == "middle") {
+		strSelectedTarget = "Middle";
+	}
+
+	if (activeKeyword == "everyone") {
+		strSelectedTarget = "All";
+	}
+
+	if (activeKeyword == "pause") {
+		pauseMenu.SetActive(true);
+		pauseActive = true;
+		Time.timeScale = 0;
+	}
+
+	if (activeKeyword == "resume") {
+		if (pauseActive == true)
+		{
+			pauseMenu.SetActive(false);
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	if (activeKeyword == "restart") {
+		if (pauseActive == true)
+		{
+			SceneManager.LoadScene("MainArena");
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	if (activeKeyword == "main menu") {
+		if (pauseActive == true)
+		{
+			SceneManager.LoadScene("MainMenu");
+			pauseActive = false;
+			Time.timeScale = 1;
+		}
+	}
+
+	if(activeKeyword == "quit"){
+		SceneManager.LoadScene("MainMenu");
+	}
+
+	if(activeKeyword == "buy"){
+			if (shopOpen == true)
+			{
+				buying = true;
+				removing = false;
+			}
+	}
+
+		if(activeKeyword == "Checkout"){
+			if (shopOpen == true)
+			{
+				if (buying == true)
+				{
+					if (health == true)
+					{
+						PlayerHealth = 100f;
+						gold = gold - 100;
+					}
+					if (defence == true)
+					{
+						DefenceStat = DefenceStat + 1;
+						gold = gold - 200;
+					}
+					if (criticalChance == true)
+					{
+						CritChance = CritChance + 1;
+						gold = gold - 200;
+					}
+					if (attack == true)
+					{
+						AttackDamage = AttackDamage + 1;
+						gold = gold - 200;
+					}
+
+					if (pendant == true)
+					{
+						moneyMultiplyer = moneyMultiplyer + 1;
+						gold = gold - 100;
+					}
+
+					shopOpen = false;
+					buying = false;
+					health = false;
+					defence = false;
+					criticalChance = false;
+					pendant = false;
+					attack = false;
+					removing = false;
+					healthSelect.SetActive(false);
+					attackSelect.SetActive(false);
+					criticalSelect.SetActive(false);
+					defenceSelect.SetActive(false);
+					pendantSelect.SetActive(false);
+
+				}
+				camAnimation.Play("BackToFight");
+			}
+	}
+
+		if(activeKeyword == "shop"){
+			if (roundEnd == true)
+			{
+				shopOpen = true;
+				camAnimation.Play("Shop");
+			}
+	}
+
+	if(activeKeyword == "next round"){
+		StartNewRound();
+	}
+
+		if(activeKeyword == "buy"){
+			if (shopOpen == true)
+			{
+				buying = true;
+				removing = false;
+			}
+		}
+
+		if(activeKeyword == "remove")
+		{
+			if (shopOpen == true)
+			{
+				removing = true;
+				buying = false;
+			}
+		}
+
+		if(activeKeyword == "health")
+		{
+			if (buying == true)
+			{
+				if(gold >= 100){
+					health = true;
+					healthSelect.SetActive(true);
+				}
+			}
+			if (removing == true)
+			{
+				health = false;
+				healthSelect.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "defence")
+		{
+			if (buying == true)
+			{
+				if(gold >= 200){
+					defence = true;
+					defenceSelect.SetActive(true);
+				}
+			}
+			if (removing == true)
+			{
+				defence = false;
+				defenceSelect.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "attack")
+		{
+			if (buying == true)
+			{
+				if(gold >= 200){
+					attack = true;
+					attackSelect.SetActive(true);
+				}
+			}
+			if (removing == true)
+			{
+				attack = false;
+				attackSelect.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "critical chance")
+		{
+			if (buying == true)
+			{
+				if(gold >= 200){
+					criticalChance = true;
+					criticalSelect.SetActive(true);
+				}
+			}
+			if (removing == true)
+			{
+				criticalChance = false;
+				criticalSelect.SetActive(false);
+			}
+		}
+
+		if(activeKeyword == "pendant")
+		{
+			if (buying == true)
+			{
+				if(gold >= 100){
+					pendant = true;
+					pendantSelect.SetActive(true);
+				}
+			}
+			if (removing == true)
+			{
+				pendant = false;
+				pendantSelect.SetActive(false);
+			}
+		}
+}
+
+void OnDestroy(){
+	if(m_DictationRecognizer != null){
+		m_DictationRecognizer.Stop();
+		m_DictationRecognizer.Dispose();
+	}
+}
 
     private void BetweenRounds() {
         between.SetActive(true);
